@@ -14,5 +14,9 @@ import {MatInputModule} from '@angular/material/input';
 
 })
 export class EmployeeComponent {
-
+  handleDateChange(event: any) {
+    const selectedDate = event.target.value;
+    console.log('Selected date:', selectedDate);
+    // Handle the selected date as needed
+  }
 }
