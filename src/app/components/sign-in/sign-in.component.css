@@ -1,0 +1,25 @@
+.signupImage,
+.mainContent {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+.sidebar {
+  display: flex;
+  justify-content: center;
+}
+.mainContent {
+  padding: 40px;
+  align-items: center;
+}
+.error {
+  color: red;
+  font-size: 14px;
+}
+.header{
+    text-align: center;
+    font-size: 30px;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-family: 'Times New Roman', Times, serif;
+}

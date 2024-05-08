@@ -1,0 +1,9 @@
+.modal-container {
+    position: relative; /* or position: absolute; */
+  }
+  
+
+.w-25{
+    text-align: left;
+    font-size: 18px;
+}

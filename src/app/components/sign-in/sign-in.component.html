@@ -1,1 +1,50 @@
-<p>sign-in works!</p>
+<div class="container-fluid">
+  <div class="row h-100">
+    <div class="col-md-6 sidebar">
+      <img src="../../../assets/images/sign-up.svg" width="350" height="350" alt="" srcset="" class="signupImage">
+    </div>
+    <div class="col-md-6 mainContent">
+      <form class="w-100" [formGroup]="siginForm">
+        <div class="header mb-3 justify-content-center"> Login Here..!!</div>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Email address</label>
+          <input type="email" class="form-control" formControlName="email">
+          @if(siginForm.controls['email'].invalid && (siginForm.controls['email'].touched ||
+          siginForm.controls['email'].dirty|| isValid))
+          {
+          <div class="error">
+            @if(siginForm.controls['email'].errors?.['required']){
+            Email is required.
+            }
+            @if(siginForm.controls['email'].errors?.['email']){
+            Invalid email address
+            }
+          </div>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">Password</label>
+          <input type="password" class="form-control" formControlName="password">
+          @if(siginForm.controls['password'].invalid && (siginForm.controls['password'].touched ||
+          siginForm.controls['password'].dirty|| isValid))
+          {
+          <div class="error">
+            @if(siginForm.controls['password'].errors?.['required']){
+            Password is required.
+            }
+            @if(siginForm.controls['password'].errors?.['minlength'] ){
+            Password should be more than {{siginForm.controls['password'].errors?.['minlength']?.requiredLength}}
+            }
+            @if(siginForm.controls['password'].errors?.['maxlength'] ){
+            Password should be less than {{siginForm.controls['password'].errors?.['maxlength']?.requiredLength}}
+            }
+
+          </div>
+          }
+        </div>
+        <button type="submit" class="btn btn-primary" routerLink="/dashboard" (click)="LoginEvent()">Login</button>
+        
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,164 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 " id="exampleModalLabel"  >Employee Details</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form >
+                              
+                <div class="form-group row">
+                    <label for="firstname" class="col-sm-2 w-25 col-form-label justify-content-left">First Name</label>
+                    <div class="col-sm-8 mb-3">
+                      <input type="text" class="form-control" id="inputfname">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="lastname" class="col-sm-2 w-25 col-form-label ">Last Name</label>
+                    <div class="col-sm-8 mb-3">
+                      <input type="text" class="form-control" id="inputlname">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="email" class="col-sm-2 w-25 col-form-label ">Email</label>
+                    <div class="col-sm-8 mb-3">
+                      <input type="email" class="form-control" id="inputemail">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="password" class="col-sm-2 w-25 col-form-label justify-content-left">Password</label>
+                    <div class="col-sm-8 mb-3">
+                      <input type="password" class="form-control" id="inputpassword">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="department" class="col-sm-2 w-25 col-form-label justify-content-left">Department</label>
+                    <div class="col-sm-8  mb-3">
+                        <select class="custom-select col-sm-8 h-95 wt-600 mb-3 mt-2  " id="inlineFormCustomSelectPref">
+                            <option selected>Choose Department</option>
+                            <option value="1">Dot Net</option>
+                            <option value="2">Php</option>
+                            <option value="3">Mobile Application</option>
+                          </select>
+                      </div>                   
+                  </div>
+                  <div class="form-group row">
+                    <label for="DOB" class="col-sm-2 w-25 col-form-label justify-content-left">DOB</label>
+                    <div class="col-sm-8 ">
+                        <div class='input-group date' id='picker'>
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>	                 </span>
+                          </div>
+                        <!-- <mat-form-field>
+                            <input matInput [matDatepicker]="picker" placeholder="Choose a date" >
+                            <mat-datepicker-toggle matSuffix [for]="picker "></mat-datepicker-toggle>
+                            <mat-datepicker  #picker ></mat-datepicker>
+                          </mat-form-field> -->
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="department" class="col-sm-2 w-25 col-form-label justify-content-left">Department</label>
+                    
+                         <select data-mdb-select-init multiple class="custom-select col-sm-8 h-95 wt-600 mb-3 mt-2  ">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                            <option value="4">Four</option>
+                            <option value="5">Five</option>
+                            <option value="6">Six</option>
+                            <option value="7">Seven</option>
+                            <option value="8">Eight</option>
+                          </select>
+                         
+                               
+                  </div>
+                
+                <!-- <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">First Name</label>
+                   <input type="text" class="form-control" formControlName="firstname"> 
+                  @if(userForm.controls['firstname'].invalid && (userForm.controls['firstname'].touched ||
+                  userForm.controls['firstname'].dirty || isValid))
+                  {
+                  <div class="error">
+                    @if(userForm.controls['firstname'].errors?.['required']){
+                    First name is required.
+                    }
+                    @if(userForm.controls['firstname'].errors?.['maxlength']){
+                    First name should be less than {{userForm.controls['firstname'].errors?.['maxlength']?.requiredLength}}
+                    }
+                  </div>
+                  } 
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Last Name</label>
+                  <input type="text" class="form-control" formControlName="lastname">
+                  @if(userForm.controls['lastname'].invalid && (userForm.controls['lastname'].touched ||
+                  userForm.controls['lastname'].dirty || isValid))
+                  {
+                  <div class="error">
+                    @if(userForm.controls['lastname'].errors?.['required']){
+                    Last name is required.
+                    }
+                    @if(userForm.controls['lastname'].errors?.['maxlength']){
+                    Last name should be less than {{userForm.controls['lastname'].errors?.['maxlength']?.requiredLength}}
+                    }
+                  </div>
+                  }
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Email address</label>
+                  <input type="email" class="form-control" formControlName="email">
+                   @if(userForm.controls['email'].invalid && (userForm.controls['email'].touched ||
+                  userForm.controls['email'].dirty|| isValid))
+                  {
+                  <div class="error">
+                    @if(userForm.controls['email'].errors?.['required']){
+                    Email is required.
+                    }
+                    @if(userForm.controls['email'].errors?.['email']){
+                    Invalid email address
+                    }
+                  </div>
+                  } 
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password</label>
+                  <input type="password" class="form-control" formControlName="password"> -->
+                <!-- @if(userForm.controls['password'].invalid && (userForm.controls['password'].touched ||
+                  userForm.controls['password'].dirty|| isValid))
+                  {
+                  <div class="error">
+                    @if(userForm.controls['password'].errors?.['required']){
+                    Password is required.
+                    }
+                    @if(userForm.controls['password'].errors?.['minlength'] ){
+                    Password should be more than {{userForm.controls['password'].errors?.['minlength']?.requiredLength}}
+                    }
+                    @if(userForm.controls['password'].errors?.['maxlength'] ){
+                    Password should be less than {{userForm.controls['password'].errors?.['maxlength']?.requiredLength}}
+                    }
+        
+                  </div>
+                  } 
+                </div>
+                <button type="submit" class="btn btn-primary" (click)="SubmitEvent()">Submit</button>
+                <p class="mt-3 text-black">Already have an account?
+                  <a routerLink="/sign-in">Sign In</a>
+                </p>   -->
+              </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>    
