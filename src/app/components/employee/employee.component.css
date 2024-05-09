@@ -1,8 +1,27 @@
+.signupImage,
+.mainContent {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+.sidebar {
+  display: flex;
+  justify-content: center;
+}
+.mainContent {
+  padding-right: 80px;
+  align-items: center;
+  text-align: center;
+  
+}
+
 .modal-container {
     position: relative; /* or position: absolute; */
   }
   
-
+.btn{
+  height: 80%;
+}
 .w-25{
     text-align: left;
     font-size: 18px;
