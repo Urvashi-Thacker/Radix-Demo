@@ -1,6 +1,6 @@
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
+  Rgister User
 </button>
 
 <!-- Modal -->
@@ -15,33 +15,35 @@
         <form>
 
           <div class="form-group row">
-            <label for="firstname" class="col-sm-2 w-25 col-form-label justify-content-left">First Name</label>
-            <div class="col-sm-8 mb-3">
+            <label for="firstname" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">First
+               Name</label>
+            <div class="col-sm-8 mb-4 mt-3 justify-content-left">
               <input type="text" class="form-control" id="inputfname">
             </div>
           </div>
           <div class="form-group row">
-            <label for="lastname" class="col-sm-2 w-25 col-form-label ">Last Name</label>
-            <div class="col-sm-8 mb-3">
+            <label for="lastname" class="col-sm-2 w-25 col-form-label mb-4 mt-3 ">Last Name</label>
+            <div class="col-sm-8 mb-4 mt-3 ">
               <input type="text" class="form-control" id="inputlname">
             </div>
           </div>
           <div class="form-group row">
-            <label for="email" class="col-sm-2 w-25 col-form-label ">Email</label>
-            <div class="col-sm-8 mb-3">
+            <label for="email" class="col-sm-2 w-25 col-form-label mb-4 mt-3">Email</label>
+            <div class="col-sm-8 mb-4 mt-3">
               <input type="email" class="form-control" id="inputemail">
             </div>
           </div>
           <div class="form-group row">
-            <label for="password" class="col-sm-2 w-25 col-form-label justify-content-left">Password</label>
-            <div class="col-sm-8 mb-3">
+            <label for="password" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Password</label>
+            <div class="col-sm-8 mb-4 mt-3">
               <input type="password" class="form-control" id="inputpassword">
             </div>
           </div>
           <div class="form-group row">
-            <label for="department" class="col-sm-2 w-25 col-form-label justify-content-left">Department</label>
-            <div class="col-sm-8  mb-3">
-              <select class="custom-select col-sm-8 h-100 wt-600 mb-4 mt-2  " id="inlineFormCustomSelectPref">
+            <label for="department"
+              class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
+            <div class="col-sm-8 ">
+              <select class="custom-select col-sm-8  wt-600 mb-4 mt-3  " id="inlineFormCustomSelectPref">
                 <option selected>Choose Department</option>
                 <option value="1">Dot Net</option>
                 <option value="2">Php</option>
@@ -50,15 +52,15 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="DOB" class="col-sm-2 w-25 col-form-label justify-content-left">DOB</label>
-            <div class="col-sm-8 ">
+            <label for="DOB" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">DOB</label>
+            <div class="col-sm-8 mb-4 mt-3">
               <div class="form-group">
-              
+
                 <input type="date" class="form-control date-picker" id="myDate" (change)="handleDateChange($event)">
-                
+
               </div>
-              
-              
+
+
               <!-- <mat-form-field>
                 <input matInput [matDatepicker]="picker" placeholder="Choose a date">
                 <mat-datepicker-toggle matSuffix [for]="picker "></mat-datepicker-toggle>
@@ -67,26 +69,45 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="skills" class="col-sm-2 w-25 col-form-label justify-content-left">skills</label>
-
-            <select data-mdb-select-init multiple class="custom-select col-sm-8 h-95 wt-600 mb-3 mt-2  ">
+            <label for="skills" class="col-sm-3 w-25 col-form-label justify-content-left mb-4 mt-3">skills</label>
+            <select data-mdb-select-init multiple class="custom-select col-sm-8 wt-600mb-4 mt-3  ">
               <option value="1">One</option>
               <option value="2">Two</option>
               <option value="3">Three</option>
-              <option value="4">Four</option>
-              <option value="5">Five</option>
-              <option value="6">Six</option>
-              <option value="7">Seven</option>
-              <option value="8">Eight</option>
+              
             </select>
-
-
+          </div>
+          <div class="form-group row">
+            <label for="shifttme" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Shift Time</label>
+            <div class="col-sm-8 mb-4 mt-3">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                <label class="form-check-label" for="inlineCheckbox1">9:00 AM - 6:00 PM</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                <label class="form-check-label" for="inlineCheckbox2">10:00 AM - 7:00 PM</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+                <label class="form-check-label" for="inlineCheckbox3">11:00 AM - 8:00 PM </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="shifttme" class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2">UserActive</label>
+            <div class="col-sm-8  mb-2 mt-2">
+              <div class="form-radio form-radio-inline">
+                <input class="form-radio-input" type="radio" id="inlineRadio" value="option1">
+                <label class="form-radio-label" for="inlineRadio" style="font-size: 18px; padding-left: 3%;">Is Active</label>
+              </div>
+            </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary" routerLink="/dashboard">Save changes</button>
       </div>
     </div>
   </div>

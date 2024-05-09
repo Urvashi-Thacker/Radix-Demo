@@ -1,6 +1,7 @@
+
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -13,7 +14,7 @@ export class SignInComponent {
 
   siginForm : FormGroup
   isValid : boolean = false
-  constructor(){
+  constructor(private route:Router){
     this.siginForm = new FormGroup({
       email : new FormControl('',[Validators.required, Validators.email]),
       password : new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)])
@@ -21,9 +22,11 @@ export class SignInComponent {
   }
 
   LoginEvent(){
-    this.isValid = this.siginForm.value;
+    this.isValid = this.siginForm.invalid;
     debugger;
-    const val = this.siginForm.value
-
+    const obj = this.siginForm.value;
+    if(this.isValid == false){
+      this.route.navigate(['dashboard']);
+    }
   }
 }
