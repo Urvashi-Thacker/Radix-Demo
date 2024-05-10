@@ -2,135 +2,226 @@
   <div class="row h-100">
     <div class="col-md-6 sidebar">
       <img src="../../../assets/images/sign-up.svg" width="350" height="350" alt="" srcset="" class="signupImage">
-      
-    </div>
-    
-    <div class="col-md-6 mainContent">
-      <form class="w-100" >
-        <div class="mb-3 ">
-         <h1 style="font-weight: 500;">Acquire first time right Angular Front End developer to craft dynamic web applications</h1>
 
-          <p style="font-size: large;">Leverage top-of-the line skills and development capabilities of deeply experienced AngularJS developers to create world-class web solutions</p>
+    </div>
+
+    <div class="col-md-6 mainContent">
+      <form class="w-100">
+        <div class="mb-3 ">
+          <h1 style="font-weight: 500;">Acquire first time right Angular Front End developer to craft dynamic web
+            applications</h1>
+
+          <p style="font-size: large;">Leverage top-of-the line skills and development capabilities of deeply
+            experienced AngularJS developers to create world-class web solutions</p>
         </div>
         <div class="mb-3">
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-           Register Yourself Here
+            Register Yourself Here
           </button>
-         </div>
-          </form>
-     
+        </div>
+      </form>
+
     </div>
-   
-    </div>
-<!-- Button trigger modal -->
+
+  </div>
+  <!-- Button trigger modal -->
 
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5 " id="exampleModalLabel">Employee Details</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form>
-
-          <div class="form-group row">
-            <label for="firstname" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">First
-               Name</label>
-            <div class="col-sm-8 mb-4 mt-3 justify-content-left">
-              <input type="text" class="form-control" id="inputfname">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="lastname" class="col-sm-2 w-25 col-form-label mb-4 mt-3 ">Last Name</label>
-            <div class="col-sm-8 mb-4 mt-3 ">
-              <input type="text" class="form-control" id="inputlname">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="email" class="col-sm-2 w-25 col-form-label mb-4 mt-3">Email</label>
-            <div class="col-sm-8 mb-4 mt-3">
-              <input type="email" class="form-control" id="inputemail">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="password" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Password</label>
-            <div class="col-sm-8 mb-4 mt-3">
-              <input type="password" class="form-control" id="inputpassword">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="department"
-              class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
-            <div class="col-sm-8 ">
-              <select class="custom-select col-sm-8  wt-600 mb-4 mt-3  " id="inlineFormCustomSelectPref">
-                <option selected>Choose Department</option>
-                <option value="1">Dot Net</option>
-                <option value="2">Php</option>
-                <option value="3">Mobile Application</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="DOB" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">DOB</label>
-            <div class="col-sm-8 mb-4 mt-3">
-              <div class="form-group">
-
-                <input type="date" class="form-control date-picker" id="myDate" (change)="handleDateChange($event)">
-
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 " id="exampleModalLabel">Employee Details</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="employeeForm">
+            <div class="col-sm-4 text-center">
+              <div class="form-group row">
+               
+                  <div class="kv-avatar ">
+                    <div class="file-loading col-sm-8 mb-4 mt-3 justify-content-left">
+                        <input id="avatar-1" name="avatar-1" type="file" required>
+                    </div>
+                </div>
+                <div class="kv-avatar-hint">
+                    <small>Select file < 1500 KB</small>
+                </div>
               </div>
+              
+          </div>
+            <div class="form-group row">
+              <label for="firstname" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">First
+                Name</label>
+              <div class="col-sm-8 mb-4 mt-3 justify-content-left">
+                <input type="text" class="form-control" formControlName="firstname">
+                @if(employeeForm.controls['firstname'].invalid && (employeeForm.controls['firstname'].touched ||
+                employeeForm.controls['firstname'].dirty ))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['firstname'].errors?.['required']){
+                  First name is required.
+                  }
+                  @if(employeeForm.controls['firstname'].errors?.['maxlength']){
+                  First name should be less than
+                  {{employeeForm.controls['firstname'].errors?.['maxlength']?.requiredLength}}
+                  }
+                </div>
+                }
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="lastname" class="col-sm-2 w-25 col-form-label mb-4 mt-3 ">Last Name</label>
+              <div class="col-sm-8 mb-4 mt-3 ">
+                <input type="text" class="form-control" id="inputlname" formControlName="lastname">
+
+                @if(employeeForm.controls['lastname'].invalid && (employeeForm.controls['lastname'].touched ||
+                employeeForm.controls['lastname'].dirty ))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['lastname'].errors?.['required']){
+                  First name is required.
+                  }
+                  @if(employeeForm.controls['lastname'].errors?.['maxlength']){
+                  Last Name name should be less than
+                  {{employeeForm.controls['lastname'].errors?.['maxlength']?.requiredLength}}
+                  }
+                </div>
+                }
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="email" class="col-sm-2 w-25 col-form-label mb-4 mt-3">Email</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <input type="email" class="form-control" id="inputemail" formControlName="email">
+                @if(employeeForm.controls['email'].invalid && (employeeForm.controls['email'].touched ||
+                employeeForm.controls['email'].dirty))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['email'].errors?.['required']){
+                  Email is required.
+                  }
+                  @if(employeeForm.controls['email'].errors?.['email']){
+                  Invalid email address
+                  }
+                </div>
+                }
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="password" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Password</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <input type="password" class="form-control" id="inputpassword" formControlName="password">
+                @if(employeeForm.controls['password'].invalid && (employeeForm.controls['password'].touched ||
+                employeeForm.controls['password'].dirty))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['password'].errors?.['required']){
+                  Password is required.
+                  }
+                  @if(employeeForm.controls['password'].errors?.['minlength'] ){
+                  Password should be more than
+                  {{employeeForm.controls['password'].errors?.['minlength']?.requiredLength}}
+                  }
+                  @if(employeeForm.controls['password'].errors?.['maxlength'] ){
+                  Password should be less than
+                  {{employeeForm.controls['password'].errors?.['maxlength']?.requiredLength}}
+                  }
+
+                </div>
+                }
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="DOB" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">DOB</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <div class="form-group">
+
+                  <input type="date" class="form-control date-picker" id="myDate" (change)="handleDateChange($event)"
+                    formControlName="dob">
+                  @if(employeeForm.controls['dob'].invalid && (employeeForm.controls['dob'].touched ||
+                  employeeForm.controls['dob'].dirty))
+                  {
+                  <div class="error">
+                    @if(employeeForm.controls['dob'].errors?.['required']){
+                    Dob is required.
+                    }
+                    @if(employeeForm.controls['dob'].errors?.['dob']){
+                    Invalid DOB }
+                  </div>
+                  }
+                </div>
 
 
-              <!-- <mat-form-field>
+                <!-- <mat-form-field>
                 <input matInput [matDatepicker]="picker" placeholder="Choose a date">
                 <mat-datepicker-toggle matSuffix [for]="picker "></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="skills" class="col-sm-3 w-25 col-form-label justify-content-left mb-4 mt-3">skills</label>
-            <select data-mdb-select-init multiple class="custom-select col-sm-8 wt-600mb-4 mt-3  ">
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-              
-            </select>
-          </div>
-          <div class="form-group row">
-            <label for="shifttme" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Shift Time</label>
-            <div class="col-sm-8 mb-4 mt-3">
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                <label class="form-check-label" for="inlineCheckbox1">9:00 AM - 6:00 PM</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                <label class="form-check-label" for="inlineCheckbox2">10:00 AM - 7:00 PM</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
-                <label class="form-check-label" for="inlineCheckbox3">11:00 AM - 8:00 PM </label>
               </div>
             </div>
-          </div>
-          <div class="form-group row">
-            <label for="shifttme" class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2">UserActive</label>
-            <div class="col-sm-8  mb-2 mt-2">
-              <div class="form-radio form-radio-inline">
-                <input class="form-radio-input" type="radio" id="inlineRadio" value="option1">
-                <label class="form-radio-label" for="inlineRadio" style="font-size: 18px; padding-left: 3%;">Is Active</label>
+            <div class="form-group row">
+              <label for="department"
+                class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
+              <div class="col-sm-8 ">
+                <select class="custom-select col-sm-8  wt-600 mb-4 mt-3  " id="inlineFormCustomSelectPref"
+                  formControlName="department">
+                  <option selected>Choose Department</option>
+                  <option value="1">Dot Net</option>
+                  <option value="2">Php</option>
+                  <option value="3">Mobile Application</option>
+                </select>
               </div>
             </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" routerLink="/dashboard">Save changes</button>
+            <div class="form-group row">
+              <label for="skills" class="col-sm-3 w-25 col-form-label justify-content-left mb-4 mt-3">skills</label>
+              <select data-mdb-select-init multiple class="custom-select col-sm-8 wt-600mb-4 mt-3 "
+                formControlName="skills">
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+
+              </select>
+            </div>
+            <div class="form-group row">
+              <label for="shifttme" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Shift
+                Time</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"
+                    formControlName="shifttme">
+                  <label class="form-check-label" for="inlineCheckbox1">9:00 AM - 6:00 PM</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                  <label class="form-check-label" for="inlineCheckbox2">10:00 AM - 7:00 PM</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+                  <label class="form-check-label" for="inlineCheckbox3">11:00 AM - 8:00 PM </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="shifttme"
+                class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2">UserActive</label>
+              <div class="col-sm-8  mb-2 mt-2">
+                <div class="form-radio form-radio-inline">
+                  <input class="form-radio-input" type="radio" id="inlineRadio" value="option1"
+                    formControlName="useractive">
+                  <label class="form-radio-label" for="inlineRadio" style="font-size: 18px; padding-left: 3%;">Is
+                    Active</label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" routerLink="/dashboard">Save changes</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
