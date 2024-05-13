@@ -1,4 +1,5 @@
 
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, ViewEncapsulation  } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -6,7 +7,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [RouterLink,RouterLinkActive,ReactiveFormsModule],
+  imports: [RouterLink,RouterLinkActive,ReactiveFormsModule, HttpClientModule],
   templateUrl: './employee.component.html',
 
   styleUrl: './employee.component.css'
@@ -16,7 +17,7 @@ export class EmployeeComponent {
 
   employeeForm : FormGroup
 
-  constructor(){
+  constructor(private http: HttpClient){
     this.employeeForm = new FormGroup({
       firstname : new FormControl('',[Validators.required, Validators.maxLength(12)]),
       lastname : new FormControl('',[Validators.required, Validators.maxLength(12)]),
@@ -37,6 +38,22 @@ export class EmployeeComponent {
     console.log('Selected date:', selectedDate);
     // Handle the selected date as needed
   }
+  SaveChanges(){
+   
+   // this.isValid = this.siginForm.invalid;
+    //debugger;
+    const obj = this.employeeForm.value;
+    debugger;
+   /* if (this.isValid == false) {
+      this.route.navigate(['dashboard']);
+    }*/
+    this.http.post('http://localhost:5178/User/Add',obj).subscribe((res: any) => {
+      console.log(res)
+    
+    
 
+    })
+   
+  }
   
 }

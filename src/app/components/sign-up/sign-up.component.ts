@@ -1,20 +1,25 @@
 import { JsonPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
+import { Component, Injectable } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+
  
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [ReactiveFormsModule, JsonPipe, RouterLink, RouterLinkActive],
+  imports: [HttpClientModule,ReactiveFormsModule, JsonPipe, RouterLink, RouterLinkActive],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css'
 })
+
 export class SignUpComponent {
   userForm: FormGroup
   isValid: boolean = false
-  constructor() {
-    this.userForm = new FormGroup({
+  post : any
+  constructor(private http: HttpClient) {
+     this.userForm = new FormGroup({
       id: new FormControl(0),
       firstname: new FormControl('', [Validators.required, Validators.maxLength(12)]),
       lastname: new FormControl('', [Validators.required, Validators.maxLength(12)]),
@@ -24,8 +29,12 @@ export class SignUpComponent {
   }
 
   SubmitEvent() {
+  
     this.isValid = this.userForm.invalid;
-    debugger;
     const obj = this.userForm.value;
+    debugger
+   this.http.post('http://localhost:5178/User/Add',this.userForm.value).subscribe((res:any)=>{
+ console.log(res);
+    })
   }
 }
