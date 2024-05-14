@@ -4,6 +4,7 @@ import { Component, ViewEncapsulation  } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+
 @Component({
   selector: 'app-employee',
   standalone: true,
@@ -19,23 +20,29 @@ export class EmployeeComponent {
 
   constructor(private http: HttpClient){
     this.employeeForm = new FormGroup({
-      firstname : new FormControl('',[Validators.required, Validators.maxLength(12)]),
-      lastname : new FormControl('',[Validators.required, Validators.maxLength(12)]),
+      
+      avatarUrl : new FormControl('',[Validators.required]),
+      firstName : new FormControl('',[Validators.required, Validators.maxLength(12)]),
+      lastName : new FormControl('',[Validators.required, Validators.maxLength(12)]),
       email : new FormControl('',[Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]),
-      department : new FormControl('',[Validators.required]),
+      departmentId : new FormControl(parseInt,[Validators.required]),
       dob : new FormControl('',[
-        Validators.required,Validators.pattern(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)
+        Validators.required,Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/
+      )
       ]),
-      skills : new FormControl('',Validators.required),
-      shifttime : new FormControl('',Validators.required),
-      useractive : new FormControl('',Validators.required)
+      skillIds : new FormControl('',Validators.required),
+      shiftIds : new FormControl('',Validators.required,),
+      isActive : new FormControl('',Validators.required)
+      
     })
+    
   }
   isActive : boolean=false
   handleDateChange(event: any) {
     const selectedDate = event.target.value;
     console.log('Selected date:', selectedDate);
+    
     // Handle the selected date as needed
   }
   SaveChanges(){
@@ -43,17 +50,16 @@ export class EmployeeComponent {
    // this.isValid = this.siginForm.invalid;
     //debugger;
     const obj = this.employeeForm.value;
+    console.log(obj)
     debugger;
    /* if (this.isValid == false) {
       this.route.navigate(['dashboard']);
     }*/
-    this.http.post('http://localhost:5178/User/Add',obj).subscribe((res: any) => {
-      console.log(res)
+    this.http.post('https://localhost:7071/User/Add',this.employeeForm.value).subscribe((res: any) => {
+      alert("Added Successfully")
+     
+ 
+     })
     
-    
-
-    })
-   
+    }
   }
-  
-}

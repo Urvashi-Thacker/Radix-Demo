@@ -29,12 +29,12 @@ export class SignInComponent {
     //debugger;
     const obj = this.siginForm.value;
     debugger;
-   /* if (this.isValid == false) {
+   
+    this.http.post('https://localhost:7071/Account/Login',this.siginForm.value).subscribe((res: any) => {
+     alert("Login Successfully")
+     if (this.isValid == false) {
       this.route.navigate(['dashboard']);
-    }*/
-    this.http.post('http://localhost:5178/Account/Login',this.siginForm.value).subscribe((res: any) => {
-      console.log(res)
-    
+    }
     
 
     })

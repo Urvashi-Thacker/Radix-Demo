@@ -42,7 +42,7 @@
                
                   <div class="kv-avatar ">
                     <div class="file-loading col-sm-8 mb-4 mt-3 justify-content-left">
-                        <input id="avatar-1" name="avatar-1" type="file" required>
+                        <input formControlName="avatarUrl" id="avatar-1" name="avatar-1" type="file"  required>
                     </div>
                 </div>
                 <div class="kv-avatar-hint">
@@ -52,40 +52,40 @@
               
           </div>
             <div class="form-group row">
-              <label for="firstname" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">First
+              <label for="firstName" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">First
                 Name</label>
               <div class="col-sm-8 mb-4 mt-3 justify-content-left">
-                <input type="text" class="form-control" formControlName="firstname">
-                @if(employeeForm.controls['firstname'].invalid && (employeeForm.controls['firstname'].touched ||
-                employeeForm.controls['firstname'].dirty ))
+                <input type="text" class="form-control" formControlName="firstName">
+                @if(employeeForm.controls['firstName'].invalid && (employeeForm.controls['firstName'].touched ||
+                employeeForm.controls['firstName'].dirty ))
                 {
                 <div class="error">
-                  @if(employeeForm.controls['firstname'].errors?.['required']){
+                  @if(employeeForm.controls['firstName'].errors?.['required']){
                   First name is required.
                   }
-                  @if(employeeForm.controls['firstname'].errors?.['maxlength']){
+                  @if(employeeForm.controls['firstName'].errors?.['maxlength']){
                   First name should be less than
-                  {{employeeForm.controls['firstname'].errors?.['maxlength']?.requiredLength}}
+                  {{employeeForm.controls['firstName'].errors?.['maxlength']?.requiredLength}}
                   }
                 </div>
                 }
               </div>
             </div>
             <div class="form-group row">
-              <label for="lastname" class="col-sm-2 w-25 col-form-label mb-4 mt-3 ">Last Name</label>
+              <label for="lastName" class="col-sm-2 w-25 col-form-label mb-4 mt-3 ">Last Name</label>
               <div class="col-sm-8 mb-4 mt-3 ">
-                <input type="text" class="form-control" id="inputlname" formControlName="lastname">
+                <input type="text" class="form-control" id="inputlname" formControlName="lastName">
 
-                @if(employeeForm.controls['lastname'].invalid && (employeeForm.controls['lastname'].touched ||
-                employeeForm.controls['lastname'].dirty ))
+                @if(employeeForm.controls['lastName'].invalid && (employeeForm.controls['lastName'].touched ||
+                employeeForm.controls['lastName'].dirty ))
                 {
                 <div class="error">
-                  @if(employeeForm.controls['lastname'].errors?.['required']){
+                  @if(employeeForm.controls['lastName'].errors?.['required']){
                   First name is required.
                   }
-                  @if(employeeForm.controls['lastname'].errors?.['maxlength']){
+                  @if(employeeForm.controls['lastName'].errors?.['maxlength']){
                   Last Name name should be less than
-                  {{employeeForm.controls['lastname'].errors?.['maxlength']?.requiredLength}}
+                  {{employeeForm.controls['lastName'].errors?.['maxlength']?.requiredLength}}
                   }
                 </div>
                 }
@@ -139,7 +139,7 @@
               <div class="col-sm-8 mb-4 mt-3">
                 <div class="form-group">
 
-                  <input type="date" class="form-control date-picker" id="myDate" (change)="handleDateChange($event)"
+                  <input type="datetime-local" class="form-control date-picker" id="myDate" (change)="handleDateChange($event)"
                     formControlName="dob">
                   @if(employeeForm.controls['dob'].invalid && (employeeForm.controls['dob'].touched ||
                   employeeForm.controls['dob'].dirty))
@@ -167,18 +167,18 @@
                 class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
               <div class="col-sm-8 ">
                 <select class="custom-select col-sm-8  wt-600 mb-4 mt-3  " id="inlineFormCustomSelectPref"
-                  formControlName="department">
+                  formControlName="departmentId">
                   <option selected>Choose Department</option>
-                  <option value="1">Dot Net</option>
-                  <option value="2">Php</option>
-                  <option value="3">Mobile Application</option>
+                  <option [ngValue]=1>Dot Net</option>
+                  <option  [ngValue]=2>Php</option>
+                  <option  [ngValue]=3>Mobile Application</option>
                 </select>
               </div>
             </div>
             <div class="form-group row">
               <label for="skills" class="col-sm-3 w-25 col-form-label justify-content-left mb-4 mt-3">skills</label>
               <select data-mdb-select-init multiple class="custom-select col-sm-8 wt-600mb-4 mt-3 "
-                formControlName="skills">
+                formControlName="skillIds">
                 <option value="1">One</option>
                 <option value="2">Two</option>
                 <option value="3">Three</option>
@@ -186,12 +186,12 @@
               </select>
             </div>
             <div class="form-group row">
-              <label for="shifttime" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Shift
+              <label for="shifttime" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3" >Shift
                 Time</label>
               <div class="col-sm-8 mb-4 mt-3">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"
-                    formControlName="shifttime">
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" formControlName="shiftIds"
+                 >
                   <label class="form-check-label" for="inlineCheckbox1">9:00 AM - 6:00 PM</label>
                 </div>
                 <div class="form-check form-check-inline">
@@ -209,8 +209,8 @@
                 class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2">UserActive</label>
               <div class="col-sm-8  mb-2 mt-2">
                 <div class="form-radio form-radio-inline">
-                  <input class="form-radio-input" type="radio" id="inlineRadio" value="option1"
-                    formControlName="useractive">
+                  <input class="form-radio-input" type="radio" id="inlineRadio" [value]=true
+                    formControlName="isActive">
                   <label class="form-radio-label" for="inlineRadio" style="font-size: 18px; padding-left: 3%;">Is
                     Active</label>
                 </div>

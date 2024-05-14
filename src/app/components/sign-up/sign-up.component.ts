@@ -33,8 +33,10 @@ export class SignUpComponent {
     this.isValid = this.userForm.invalid;
     const obj = this.userForm.value;
     debugger
-   this.http.post('http://localhost:5178/User/Add',this.userForm.value).subscribe((res:any)=>{
- console.log(res);
-    })
+    this.http.post('http://localhost:5178/User/Add',this.userForm.value).subscribe((res: any) => {
+      alert("Login Successfully")
+     
+ 
+     })
   }
 }
