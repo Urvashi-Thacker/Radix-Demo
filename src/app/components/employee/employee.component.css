@@ -4,50 +4,106 @@
   display: flex;
   justify-content: center;
 }
-.kv-avatar .krajee-default.file-preview-frame,.kv-avatar .krajee-default.file-preview-frame:hover {
+
+.kv-avatar .krajee-default.file-preview-frame,
+.kv-avatar .krajee-default.file-preview-frame:hover {
   margin: 0;
   padding: 0;
   border: none;
   box-shadow: none;
   text-align: center;
 }
+
 .kv-avatar {
   display: inline-block;
 }
+
 .kv-avatar .file-input {
   display: table-cell;
   width: 213px;
 }
+
 .kv-reqd {
   color: red;
   font-family: monospace;
   font-weight: normal;
 }
+
 .sidebar {
   display: flex;
   justify-content: center;
 }
+
 .mainContent {
   padding-right: 80px;
   align-items: center;
   text-align: center;
-  
+
 }
 
 .modal-container {
-    position: relative; /* or position: absolute; */
-  }
-  
-
-.w-25{
-    text-align: left;
-    font-size: 18px;
+  position: relative;
+  /* or position: absolute; */
 }
-.custom-select{
+
+
+.w-25 {
+  text-align: left;
+  font-size: 18px;
+}
+
+.custom-select {
   height: 50%;
   text-align: center;
 }
+
 .error {
   color: red;
   font-size: 14px;
+}
+
+
+
+.file-input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.file-input-label {
+  display: block;
+  width: 200px;
+
+  height: 200px;
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 200px;
+  cursor: pointer;
+}
+
+.file-input-label span {
+  font-size: 16px;
+}
+
+.file-input-label span.browse {
+  color: blue;
+  text-decoration: underline;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-input-label:hover {
+  background-color: #f0f0f0;
+}
+
+.file-input-label:active {
+  background-color: #e0e0e0;
 }
