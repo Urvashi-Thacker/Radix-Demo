@@ -31,13 +31,21 @@ export class SignInComponent {
     debugger;
    
     this.http.post('https://localhost:7071/Account/Login',this.siginForm.value).subscribe((res: any) => {
-     alert("Login Successfully")
-     if (this.isValid == false) {
-      this.route.navigate(['dashboard']);
-    }
-    
-
+      debugger
+      if(res == true){
+        debugger
+        alert("Login Successfully")
+        this.route.navigate(['employee']);
+      }else if(res == false){
+        alert("Enter valid email & password")
+      }
+   
     })
+    
+    if (this.isValid == true) {
+     debugger
+ alert("Enter  email & password")
    
   }
+}
 }

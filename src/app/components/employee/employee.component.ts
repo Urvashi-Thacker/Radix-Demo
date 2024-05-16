@@ -26,6 +26,9 @@ export class EmployeeComponent {
   employeeForm: FormGroup
   selectedFile: File | null = null;
   copiedImageFile: File | null = null;
+  userArray : any[]=[]
+  value : boolean = true
+  
   handleDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -62,6 +65,7 @@ export class EmployeeComponent {
       avatarUrl: new FormControl('', [Validators.required]),
       firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
       lastName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
+      gender: new FormControl('',Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]),
       departmentId: new FormControl(parseInt, [Validators.required]),
@@ -74,8 +78,10 @@ export class EmployeeComponent {
       isActive: new FormControl('', Validators.required)
 
     })
+    this.GetAll()
 
   }
+ 
   isActive: boolean = false
   handleDateChange(event: any) {
     const selectedDate = event.target.value;
@@ -94,9 +100,20 @@ export class EmployeeComponent {
        this.route.navigate(['dashboard']);
      }*/
     this.http.post('https://localhost:7071/User/Add', this.employeeForm.value).subscribe((res: any) => {
-      alert("Added Successfully")
+      
    
     })
 
   }
+ 
+  GetAll(){
+   
+    this.http.get("https://localhost:7071/User/GetAll").subscribe((res : any)=>{
+      this.userArray = res
+    })
+  }
+  getGenderLabel(value : boolean) : string{
+  return value ? 'Male' : 'Female'
+  }
+  
 }

@@ -1,18 +1,46 @@
-<div class="container">
-    <div class="row">
-        <div class="col-6">
+<div class="container" >
+   <p style="display: block; text-align: center; font-size:35px; font-weight: 800px; font-family:'Times New Roman', Times, serif ;">Employee's Dashboard</p>
+</div>
+
+<div class=".custom-table" style="margin-top: 20px;margin-left: auto;">
+    <div class="row  ">
+        <div class="col-12">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Sr.no</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Avatar</th>
-                        <th>email</th>
-                        <th>Dob</th>
+
+                        <th>FIRST NAME</th>
+                        <th>LAST NAME</th>
+                        <th>GENDER</th>
+                        <th>EMAIL</th>
+                        <th>DATE OF BIRTH</th>
+                        <th>DEPARTMENT</th>
+                        <th>SKILLS</th>
+                        <th>SHIFT</th>
+                        <th>UPLOADED IMAGE</th>
+                        <th>EDIT</th>
+                        <th>DELETE</th>
                     </tr>
                 </thead>
+                <tbody>
+                    <tr *ngFor="let users of userArray">
+
+                        <td>{{users.firstName}}</td>
+                        <td>{{users.lastName}}</td>
+                        <td >{{getGenderLabel(users.gender)}}</td>
+                        <td>{{users.email}}</td>
+                        <td>{{users.dob}}</td>
+                        <td>{{users.department}}</td>
+                        <td>{{users.skills}}</td>
+                        <td>{{users.shifttime}}</td>
+                        <td>{{users.avatarUrl}}</td>
+                        <td><button class="btn  btn-success">Edit</button></td>
+                        <td><button class="btn btn-danger">Delete</button></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
 </div>
+
+
