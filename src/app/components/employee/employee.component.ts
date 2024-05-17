@@ -8,9 +8,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
-import { Console } from 'console';
-import { copyFile } from 'fs';
-import path from 'path';
+
+
 
 @Component({
   selector: 'app-employee',
@@ -27,6 +26,7 @@ export class EmployeeComponent {
   selectedFile: File | null = null;
   copiedImageFile: File | null = null;
   userArray : any[]=[]
+
   value : boolean = true
   
   handleDragOver(event: DragEvent) {
@@ -61,7 +61,7 @@ export class EmployeeComponent {
 
   constructor(private http: HttpClient) {
     this.employeeForm = new FormGroup({
-
+    
       avatarUrl: new FormControl('', [Validators.required]),
       firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
       lastName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
@@ -79,7 +79,7 @@ export class EmployeeComponent {
 
     })
     this.GetAll()
-
+    
   }
  
   isActive: boolean = false
@@ -95,6 +95,7 @@ export class EmployeeComponent {
     //debugger;
     const obj = this.employeeForm.value;
     console.log(obj)
+    
     debugger;
     /* if (this.isValid == false) {
        this.route.navigate(['dashboard']);
@@ -116,4 +117,11 @@ export class EmployeeComponent {
   return value ? 'Male' : 'Female'
   }
   
+  onDelete(userId : number){
+    debugger
+
+      this.http.delete(`https://localhost:7071/User/Delete/${userId}`).subscribe((res : any)=>{
+    
+    })
+  }
 }

@@ -295,7 +295,7 @@
                      </tr>
                  </thead>
                  <tbody>
-                     <tr *ngFor="let users of userArray">
+                     <tr *ngFor="let users of userArray ">
  
                          <td>{{users.firstName}}</td>
                          <td>{{users.lastName}}</td>
@@ -306,8 +306,9 @@
                          <td>{{users.skills}}</td>
                          <td>{{users.shifttime}}</td>
                          <td>{{users.avatarUrl}}</td>
+                       
                          <td><button class="btn  btn-success">Edit</button></td>
-                         <td><button class="btn btn-danger">Delete</button></td>
+                         <td><button class="btn btn-danger" (click)="onDelete(users.id)">Delete</button></td>
                      </tr>
                  </tbody>
              </table>

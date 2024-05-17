@@ -3,7 +3,9 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import { Component, Injectable } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import {Router, RouterLink, RouterLinkActive } from '@angular/router';
+
+
 
  
 @Component({
@@ -18,7 +20,7 @@ export class SignUpComponent {
   userForm: FormGroup
   isValid: boolean = false
   post : any
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient , private route : Router) {
      this.userForm = new FormGroup({
       id: new FormControl(0),
       firstname: new FormControl('', [Validators.required, Validators.maxLength(12)]),
@@ -33,11 +35,9 @@ export class SignUpComponent {
     this.isValid = this.userForm.invalid;
     const obj = this.userForm.value;
     debugger
-    this.http.post('https://localhost:7071/User/Add',this.userForm.value).subscribe((res: any) => {
-      debugger
-      alert("Login Successfully")
-     
- 
-     })
+   if(this.isValid == false){
+    alert("Login Successfully")
+        this.route.navigate(['sign-in']);
+   }
   }
 }
