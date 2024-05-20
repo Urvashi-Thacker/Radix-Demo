@@ -15,7 +15,7 @@
             experienced AngularJS developers to create world-class web solutions</p>
         </div>
         <div class="mb-3">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" >
             Register Yourself Here
           </button>
         </div>
@@ -307,7 +307,7 @@
                          <td>{{users.shifttime}}</td>
                          <td>{{users.avatarUrl}}</td>
                        
-                         <td><button class="btn  btn-success">Edit</button></td>
+                         <td><button class="btn  btn-success" data-bs-target="#exampleModal" (click)="onUpdate(users.id)" >Edit</button></td>
                          <td><button class="btn btn-danger" (click)="onDelete(users.id)">Delete</button></td>
                      </tr>
                  </tbody>

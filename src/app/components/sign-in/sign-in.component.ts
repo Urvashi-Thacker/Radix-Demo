@@ -3,6 +3,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-sign-in',
@@ -16,7 +17,7 @@ export class SignInComponent {
   siginForm: FormGroup
   isValid: boolean = false
  
-  constructor(private route: Router, private http: HttpClient) {
+  constructor(private route: Router, private http: HttpClient, private toastr : ToastrService) {
     this.siginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)])
@@ -34,17 +35,17 @@ export class SignInComponent {
       debugger
       if(res == true){
         debugger
-        alert("Login Successfully")
+        this.toastr.success("Login Successfully",'Success')
         this.route.navigate(['employee']);
       }else if(res == false){
-        alert("Enter valid email & password")
+        this.toastr.error("Enter valid email & password",'Error')
       }
    
     })
     
     if (this.isValid == true) {
      debugger
- alert("Enter  email & password")
+ this.toastr.error("Enter  email & password",'Error')
    
   }
 }

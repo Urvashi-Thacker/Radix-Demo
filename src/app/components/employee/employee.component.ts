@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
-
+import { ToastrService } from 'ngx-toastr';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
+
 
 
 
@@ -26,7 +27,7 @@ export class EmployeeComponent {
   selectedFile: File | null = null;
   copiedImageFile: File | null = null;
   userArray : any[]=[]
-
+ userToDelete : number = 1
   value : boolean = true
   
   handleDragOver(event: DragEvent) {
@@ -59,7 +60,9 @@ export class EmployeeComponent {
 
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private toastr : ToastrService, private router : Router) {
+   
+  
     this.employeeForm = new FormGroup({
     
       avatarUrl: new FormControl('', [Validators.required]),
@@ -79,9 +82,9 @@ export class EmployeeComponent {
 
     })
     this.GetAll()
-    
+   
   }
- 
+  
   isActive: boolean = false
   handleDateChange(event: any) {
     const selectedDate = event.target.value;
@@ -106,7 +109,7 @@ export class EmployeeComponent {
     })
 
   }
- 
+  
   GetAll(){
    
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res : any)=>{
@@ -116,12 +119,35 @@ export class EmployeeComponent {
   getGenderLabel(value : boolean) : string{
   return value ? 'Male' : 'Female'
   }
-  
-  onDelete(userId : number){
-    debugger
 
-      this.http.delete(`https://localhost:7071/User/Delete/${userId}`).subscribe((res : any)=>{
+ 
+  onDelete(userId: number) {
     
-    })
+    this.toastr.warning('Are you sure you want to delete?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
+      this.http.delete(`https://localhost:7071/User/Delete/${userId}`).subscribe(
+        (res: any) => {
+          this.GetAll(); // Assuming GetAll() is a method to refresh user data
+          this.toastr.success('Deleted Successfully', 'Success');
+        },
+        (error) => {
+          console.error('Delete request failed:', error);
+          this.toastr.error('Failed to delete user', 'Error');
+        }
+      );
+    });
+  }
+  onUpdate(userId: number){
+    this.toastr.warning('Are you sure you want to Update?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
+      this.http.delete(`https://localhost:7071/User/Update/${userId}`).subscribe(
+        (res: any) => {
+        // this.openModel(); // Assuming GetAll() is a method to refresh user data
+          this.toastr.success('Updated Successfully', 'Success');
+        },
+        (error) => {
+          console.error('Delete request failed:', error);
+          this.toastr.error('Failed to update user', 'Error');
+        }
+      );
+    });
   }
 }
