@@ -1,7 +1,7 @@
 
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, numberAttribute } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -26,10 +26,12 @@ export class EmployeeComponent {
   employeeForm: FormGroup
   selectedFile: File | null = null;
   copiedImageFile: File | null = null;
-  userArray : any[]=[]
- userToDelete : number = 1
-  value : boolean = true
-  
+  userArray: any[] = []
+  userToDelete: number = 1
+  value: boolean = true
+  isEdit: boolean = false
+
+
   handleDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -42,33 +44,34 @@ export class EmployeeComponent {
 
     }
   }
-  onFileSelected(event: any) : void { 
-    this.selectedFile = event.target.files[0]; 
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
   }
   copyImage() {
-   debugger
-    if (!this.selectedFile) { 
-     return;
+    debugger
+    if (!this.selectedFile) {
+      return;
     }
     this.copiedFile(this.selectedFile, '../../../assets/savedImages/image.jpg')
-    
- }
- copiedFile(file: File , destinationPath : string) : void {
-  console.log("Filed copy to destination", file,destinationPath)
- }
+
+  }
+  copiedFile(file: File, destinationPath: string): void {
+    console.log("Filed copy to destination", file, destinationPath)
+  }
   closeDialog() {
 
   }
 
-  constructor(private http: HttpClient, private toastr : ToastrService, private router : Router) {
-   
-  
+  constructor(private http: HttpClient, private toastr: ToastrService, private router: Router) {
+
+
     this.employeeForm = new FormGroup({
-    
+
+      id: new FormControl(),
       avatarUrl: new FormControl('', [Validators.required]),
       firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
       lastName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
-      gender: new FormControl('',Validators.required),
+      gender: new FormControl('', Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]),
       departmentId: new FormControl(parseInt, [Validators.required]),
@@ -82,47 +85,59 @@ export class EmployeeComponent {
 
     })
     this.GetAll()
-   
+
   }
-  
+
   isActive: boolean = false
+
   handleDateChange(event: any) {
     const selectedDate = event.target.value;
     console.log('Selected date:', selectedDate);
-
-    // Handle the selected date as needed
   }
   SaveChanges() {
 
-    // this.isValid = this.siginForm.invalid;
-    //debugger;
     const obj = this.employeeForm.value;
     console.log(obj)
-    
+
     debugger;
-    /* if (this.isValid == false) {
-       this.route.navigate(['dashboard']);
-     }*/
-    this.http.post('https://localhost:7071/User/Add', this.employeeForm.value).subscribe((res: any) => {
-      
-   
-    })
+    if (obj != null && obj.id != null) {
+
+      this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
+        (res: any) => {
+          // Assuming GetAll() is a method to refresh user data
+          this.toastr.success('Updated Successfully', 'Success');
+        },
+        (error) => {
+          console.error('Update request failed:', error);
+          this.toastr.error('Failed to update user', 'Error');
+        }
+      );
+    } else {
+
+      this.http.post('https://localhost:7071/User/Add', this.employeeForm.value).subscribe((res: any) => {
+
+      })
+    }
+
 
   }
-  
-  GetAll(){
-   
-    this.http.get("https://localhost:7071/User/GetAll").subscribe((res : any)=>{
+
+  GetAll() {
+
+    this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
       this.userArray = res
     })
   }
-  getGenderLabel(value : boolean) : string{
-  return value ? 'Male' : 'Female'
+  getGenderLabel(value: boolean): string {
+    return value ? 'Male' : 'Female'
+  }
+  userActive(value: boolean): string {
+    return value ? 'ACTIVE' : 'INACTIVE'
   }
 
- 
+
   onDelete(userId: number) {
-    
+
     this.toastr.warning('Are you sure you want to delete?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
       this.http.delete(`https://localhost:7071/User/Delete/${userId}`).subscribe(
         (res: any) => {
@@ -136,18 +151,13 @@ export class EmployeeComponent {
       );
     });
   }
-  onUpdate(userId: number){
-    this.toastr.warning('Are you sure you want to Update?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
-      this.http.delete(`https://localhost:7071/User/Update/${userId}`).subscribe(
-        (res: any) => {
-        // this.openModel(); // Assuming GetAll() is a method to refresh user data
-          this.toastr.success('Updated Successfully', 'Success');
-        },
-        (error) => {
-          console.error('Delete request failed:', error);
-          this.toastr.error('Failed to update user', 'Error');
-        }
-      );
+
+
+  onUpdate(data: any, userId: number) {
+    this.isEdit = true
+    this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(() => {
+      const formData = this.employeeForm.setValue({ id: data.id, firstName: data.firstName, lastName: data.lastName, gender: data.gender, email: data.email, password: "sdfdfsaa", dob: data.dob, departmentId: 1, skillIds: null, shiftIds: null, isActive: data.isActive, avatarUrl: data.avatarUrl })
     });
   }
+
 }
