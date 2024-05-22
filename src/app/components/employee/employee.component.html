@@ -178,18 +178,15 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="department"
-                class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
-              <div class="col-sm-8 ">
-                <select class="custom-select col-sm-8  wt-600 mb-4 mt-3  " id="inlineFormCustomSelectPref"
-                  formControlName="departmentId">
-                  <option selected>Choose Department</option>
-                  <option [ngValue]=1>Dot Net</option>
-                  <option [ngValue]=2>Php</option>
-                  <option [ngValue]=3>Mobile Application</option>
-                </select>
+              <label for="Department" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                  <select class="form-select col-sm-3" style="text-align: center;" formControlName="departmentId">
+                      <option [ngValue]="null">Select any role..</option>
+                      <option *ngFor="let item of department" [ngValue]="item.id">{{ item.name }}</option>
+                  </select>
               </div>
-            </div>
+          </div>
+          
             <div class="form-group row">
               <label for="skills" class="col-sm-3 w-25 col-form-label justify-content-left mb-4 mt-3">skills</label>
               <select data-mdb-select-init multiple class="custom-select col-sm-8 wt-600mb-4 mt-3 "

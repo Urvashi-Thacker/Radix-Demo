@@ -1,27 +1,25 @@
 
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, ViewEncapsulation, numberAttribute } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, numberAttribute } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastrService } from 'ngx-toastr';
-import { AvatarModule } from 'primeng/avatar';
-import { AvatarGroupModule } from 'primeng/avatargroup';
-
 
 
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, ReactiveFormsModule, HttpClientModule, CommonModule, FileUploadModule, AvatarModule, AvatarGroupModule],
+  imports: [
+    RouterLink, RouterLinkActive, ReactiveFormsModule, HttpClientModule, CommonModule, FileUploadModule],
   templateUrl: './employee.component.html',
 
   styleUrl: './employee.component.css'
 
 })
-export class EmployeeComponent {
+export class EmployeeComponent implements OnInit {
 
   employeeForm: FormGroup
   selectedFile: File | null = null;
@@ -30,7 +28,7 @@ export class EmployeeComponent {
   userToDelete: number = 1
   value: boolean = true
   isEdit: boolean = false
-
+  department : any[]=[]
 
   handleDragOver(event: DragEvent) {
     event.preventDefault();
@@ -61,7 +59,7 @@ export class EmployeeComponent {
   closeDialog() {
 
   }
-
+ 
   constructor(private http: HttpClient, private toastr: ToastrService, private router: Router) {
 
 
@@ -74,7 +72,7 @@ export class EmployeeComponent {
       gender: new FormControl('', Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]),
-      departmentId: new FormControl(parseInt, [Validators.required]),
+      departmentId: new FormControl(parseInt, [Validators.min(1)]),
       dob: new FormControl('', [
         Validators.required, Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/
         )
@@ -86,6 +84,9 @@ export class EmployeeComponent {
     })
     this.GetAll()
 
+  }
+  ngOnInit(): void {
+    this.GetDepartment()
   }
 
   isActive: boolean = false
@@ -159,5 +160,13 @@ export class EmployeeComponent {
       const formData = this.employeeForm.setValue({ id: data.id, firstName: data.firstName, lastName: data.lastName, gender: data.gender, email: data.email, password: "sdfdfsaa", dob: data.dob, departmentId: 1, skillIds: null, shiftIds: null, isActive: data.isActive, avatarUrl: data.avatarUrl })
     });
   }
-
+  
+  GetDepartment(){
+    
+    this.http.get("https://localhost:7071/Department/GetDepartmentList").subscribe((res : any)=>{
+      debugger
+    console.log(res) 
+    this.department = res
+    })
+  }
 }
