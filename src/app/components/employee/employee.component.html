@@ -38,27 +38,25 @@
         <div class="modal-body">
           <form [formGroup]="employeeForm">
            
-            <label for="file" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)">
-              <i class="ph ph-upload"></i>
+         <div class="avatar"  style="margin-left: 85px;" >   
+          <label for="file" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)">
+          <i class="ph ph-upload"></i>
 
-              <span>
-                Drag & drop or
-                <span>browse</span>
-                your files
-              </span>
-            </label>
-            <div class="col-sm-4 text-center">
-              <div class="form-group row">
-               
-                  <div class="kv-avatar ">
-                    <div class="file-loading col-sm-8 mb-4 mt-3 justify-content-left">
-                        <input formControlName="avatarUrl" id="avatar-1" name="avatar-1" type="file" (change)="onFileSelected($event)" required>
-                    </div>
+          <span>
+            Drag & drop or browse your files
+          </span>
+        </label>  
+        <div class="col-sm-4 text-center">
+          <div class="form-group row">              
+              <div class="kv-avatar ">
+                <div class="file-loading col-sm-8 mb-4 mt-3 justify-content-left">
+                  <img [src]="url" height="200"   style="justify-content: center;">                     
+                    <input formControlName="avatarUrl" id="avatar-1" name="avatar-1" type="file" (change)="onFileSelected($event)" required>      
+                                
                 </div>
-              
-              </div>
-              
-          </div>
+            </div>            
+          </div>             
+      </div></div>
             <div class="form-group row">
               <label for="firstName" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">First
                 Name</label>
@@ -181,7 +179,7 @@
               <label for="Department" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
               <div class="col-sm-8 mb-4 mt-3">
                   <select class="form-select col-sm-3" style="text-align: center;" formControlName="departmentId">
-                      <option [ngValue]="null">Select any role..</option>
+                      <option  [ngValue]=0 >Select any role..</option>
                       <option *ngFor="let item of department" [ngValue]="item.id">{{ item.name }}</option>
                   </select>
               </div>
@@ -239,7 +237,7 @@
   </div>
 
   <div class="container" >
-    <p style="display: block; text-align: center; font-size:35px; font-weight: 800px; font-family:'Times New Roman', Times, serif ;">Employee's Dashboard</p>
+    <p style="display: block; text-align: center; font-size:35px; font-weight: 800px; font-family:'Times New Roman', Times, serif ;">EMPLOYEE DASHBOARD</p>
  </div>
  
  <div class=".custom-table" style="margin-top: 20px;margin-left: auto;">
@@ -271,11 +269,11 @@
                          <td >{{getGenderLabel(users.gender)}}</td>
                          <td>{{users.email}}</td>
                          <td>{{users.dob |  date :'short'}}</td>
-                         <td>{{users.department}}</td>
+                         <td>{{users.departmentName}}</td>
                          <td>{{users.skills}}</td>
                          <td>{{users.shifttime}}</td>
                          <td >{{userActive(users.isActive)}}</td>
-                         <td>{{users.avatarUrl}}</td>
+                         <td><img [src]="users.avatarUrl" ></td>
                        
                          <td><button class="btn  btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="onUpdate(users,users.id)" >Edit</button></td>
                          <td><button class="btn btn-danger" (click)="onDelete(users.id)">Delete</button></td>

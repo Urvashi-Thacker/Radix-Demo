@@ -29,7 +29,8 @@ export class EmployeeComponent implements OnInit {
   value: boolean = true
   isEdit: boolean = false
   department : any[]=[]
-
+departmentname : string=""
+url ="../../../assets/images/sign-up.svg";
   handleDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -42,7 +43,16 @@ export class EmployeeComponent implements OnInit {
 
     }
   }
-  onFileSelected(event: any): void {
+  onFileSelected(event:any) {
+    if(event.target.files){
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+        reader.onload=(event:any)=>{
+          this.url=event.target.result;
+        }
+        
+      
+    }
     this.selectedFile = event.target.files[0];
   }
   copyImage() {
@@ -72,21 +82,22 @@ export class EmployeeComponent implements OnInit {
       gender: new FormControl('', Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]),
-      departmentId: new FormControl(parseInt, [Validators.min(1)]),
+      departmentId: new FormControl(parseInt),
       dob: new FormControl('', [
         Validators.required, Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/
         )
       ]),
       skillIds: new FormControl('', Validators.required),
       shiftIds: new FormControl('', Validators.required,),
-      isActive: new FormControl('', Validators.required)
-
+      isActive: new FormControl('', Validators.required),
+      //departmentName : new FormControl('',Validators.required)
     })
+ 
+  }
+  ngOnInit() {
+    this.GetDepartment()
     this.GetAll()
 
-  }
-  ngOnInit(): void {
-    this.GetDepartment()
   }
 
   isActive: boolean = false
@@ -126,7 +137,9 @@ export class EmployeeComponent implements OnInit {
   GetAll() {
 
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
+      debugger
       this.userArray = res
+      
     })
   }
   getGenderLabel(value: boolean): string {
@@ -157,7 +170,7 @@ export class EmployeeComponent implements OnInit {
   onUpdate(data: any, userId: number) {
     this.isEdit = true
     this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(() => {
-      const formData = this.employeeForm.setValue({ id: data.id, firstName: data.firstName, lastName: data.lastName, gender: data.gender, email: data.email, password: "sdfdfsaa", dob: data.dob, departmentId: 1, skillIds: null, shiftIds: null, isActive: data.isActive, avatarUrl: data.avatarUrl })
+      const formData = this.employeeForm.setValue({ id: data.id, firstName: data.firstName, lastName: data.lastName, gender: data.gender, email: data.email, password: "sdfdfsaa", dob: data.dob, departmentId: this.department, skillIds: null, shiftIds: null, isActive: data.isActive, avatarUrl: data.avatarUrl })
     });
   }
   
@@ -167,6 +180,9 @@ export class EmployeeComponent implements OnInit {
       debugger
     console.log(res) 
     this.department = res
+   
     })
   }
+ 
+
 }
