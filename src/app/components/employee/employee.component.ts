@@ -107,32 +107,99 @@ url ="../../../assets/images/sign-up.svg";
     console.log('Selected date:', selectedDate);
   }
   SaveChanges() {
-
     const obj = this.employeeForm.value;
-    console.log(obj)
+debugger
+    // Check if all fields are filled
+      // Save the image file to the assets/images folder
+        this.saveImageLocally(obj.avatarUrl).then((filename: string) => {
+            // Update obj.avatarUrl with the relative path
+            obj.avatarUrl = `assets/images/${filename}`;
 
-    debugger;
-    if (obj != null && obj.id != null) {
+            if (obj?.id != null) {
+                this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
+                    (res: any) => {
+                        // Assuming GetAll() is a method to refresh user data
+                        this.toastr.success('Updated Successfully', 'Success');
+                    },
+                    (error) => {
+                        console.error('Update request failed:', error);
+                        this.toastr.error('Failed to update user', 'Error');
+                    }
+                );
+            } else {
+                this.http.post('https://localhost:7071/User/Add', obj).subscribe((res: any) => {
+                    // Handle response if needed
+                });
+            }
+        }).catch(error => {
+            console.error('Failed to save image locally:', error);
+            this.toastr.error('Failed to save image locally', 'Error');
+        });
+    
+      }
+     
 
-      this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
-        (res: any) => {
-          // Assuming GetAll() is a method to refresh user data
-          this.toastr.success('Updated Successfully', 'Success');
-        },
-        (error) => {
-          console.error('Update request failed:', error);
-          this.toastr.error('Failed to update user', 'Error');
-        }
-      );
-    } else {
+saveImageLocally(avatarUrl: string): Promise<string> {
+  debugger
+  const filename = this.extractFilename(avatarUrl);
+  const localPath = `assets/images/${filename}`;
 
-      this.http.post('https://localhost:7071/User/Add', this.employeeForm.value).subscribe((res: any) => {
+  return new Promise<string>((resolve, reject) => {
+    // Assuming avatarUrl contains the actual file data in base64 format
+    const base64Data = avatarUrl.split(',')[1];
+    const blob = new Blob([this.base64toBlob(base64Data)], { type: 'image/jpeg' }); // Adjust MIME type if needed
 
-      })
-    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      // Write the blob data to the local file
+      try {
+        this.writeBlobToFile(blob, localPath);
+        resolve(filename);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = error => reject(error);
+    reader.readAsArrayBuffer(blob);
+  });
+}
 
+private writeBlobToFile(blob: Blob, filepath: string): void {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filepath;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
 
+private extractFilename(url: string): string {
+  // Extract filename from fake path
+  const startIndex = url.lastIndexOf('\\') + 1;
+  const filename = url.substring(startIndex);
+  return filename;
+}
+
+private base64toBlob(base64Data: string): ArrayBuffer {
+  try {
+      const byteString = atob(base64Data);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+      for (let i = 0; i < byteString.length; i++) {
+          uint8Array[i] = byteString.charCodeAt(i);
+      }
+      return arrayBuffer;
+  } catch (error) {
+      console.error('Failed to decode base64 string:', error);
+      throw error;
   }
+}
+
+
+
+
+
+
 
   GetAll() {
 
@@ -148,8 +215,13 @@ url ="../../../assets/images/sign-up.svg";
   userActive(value: boolean): string {
     return value ? 'ACTIVE' : 'INACTIVE'
   }
-
-
+  transformImagePath(imageUrl: string){
+    // Replace "file:///" with an empty string
+    // and remove the "fakepath" segment
+    const transformedUrl= imageUrl.replace(/^file:\/\/\//, '').replace(/^C:\\fakepath\\/, '');
+    console.log(transformedUrl)
+    return transformedUrl
+    }
   onDelete(userId: number) {
 
     this.toastr.warning('Are you sure you want to delete?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
@@ -185,4 +257,8 @@ url ="../../../assets/images/sign-up.svg";
   }
  
 
+}
+
+function isFormFilled(obj: any, any: any) {
+  throw new Error('Function not implemented.');
 }

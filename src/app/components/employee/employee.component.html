@@ -273,7 +273,7 @@
                          <td>{{users.skills}}</td>
                          <td>{{users.shifttime}}</td>
                          <td >{{userActive(users.isActive)}}</td>
-                         <td><img [src]="users.avatarUrl" ></td>
+                         <td><img [src]="transformImagePath(users.avatarUrl)" ></td>
                        
                          <td><button class="btn  btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="onUpdate(users,users.id)" >Edit</button></td>
                          <td><button class="btn btn-danger" (click)="onDelete(users.id)">Delete</button></td>
