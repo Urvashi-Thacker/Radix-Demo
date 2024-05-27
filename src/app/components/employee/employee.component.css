@@ -176,3 +176,11 @@
 .modal-footer button {
   margin-left: 10px;
 }
+.mat-radio-button {
+  margin: 0 12px;
+  display: flex;
+  align-items: flex-start;
+}
+.custom-mat-select-panel {
+  z-index: 0; /* Adjust as needed */
+}
