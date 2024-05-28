@@ -15,7 +15,9 @@
             experienced AngularJS developers to create world-class web solutions</p>
         </div>
         <div class="mb-3">
-          <button mat-button (click)="openDialog()">Open dialog</button>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" >
+            Register Yourself Here
+          </button>
         </div>
       </form>
 
@@ -25,13 +27,293 @@
   <!-- Button trigger modal -->
 
 
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+      <div class="modal-content ">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 " id="exampleModalLabel">Employee Details</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="employeeForm">
+           
+         <div class="avatar"  style="margin-left: 122px;" >   
+          <label for="file" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)">
+          <i class="ph ph-upload"></i>
 
+          <span>
+            Drag & drop or browse your files
+          </span>
+        </label>  
+        <div class="col-sm-4 text-center">
+          <div class="form-group row">              
+              <div class="kv-avatar ">
+                <div class="file-loading col-sm-8 mb-4 mt-3 justify-content-left">
+                  <img [src]="url" height="200"   style="justify-content: center;">                     
+                    <input formControlName="avatarUrl" id="avatar-1" name="avatar-1" type="file" (change)="onFileSelected($event)" required>      
+                                
+                </div>
+            </div>            
+          </div>             
+      </div></div>
+            <div class="form-group row">
+              <label for="firstName" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">First
+                Name</label>
+              <div class="col-sm-8 mb-4 mt-3 justify-content-left">
+                <input type="text" class="form-control" formControlName="firstName">
+                @if(employeeForm.controls['firstName'].invalid && (employeeForm.controls['firstName'].touched ||
+                employeeForm.controls['firstName'].dirty ))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['firstName'].errors?.['required']){
+                  First name is required.
+                  }
+                  @if(employeeForm.controls['firstName'].errors?.['maxlength']){
+                  First name should be less than
+                  {{employeeForm.controls['firstName'].errors?.['maxlength']?.requiredLength}}
+                  }
+                </div>
+                }
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="lastName" class="col-sm-2 w-25 col-form-label mb-4 mt-3 ">Last Name</label>
+              <div class="col-sm-8 mb-4 mt-3 ">
+                <input type="text" class="form-control" id="inputlname" formControlName="lastName">
 
-  <!-- <div class="container" >
+                @if(employeeForm.controls['lastName'].invalid && (employeeForm.controls['lastName'].touched ||
+                employeeForm.controls['lastName'].dirty ))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['lastName'].errors?.['required']){
+                  First name is required.
+                  }
+                  @if(employeeForm.controls['lastName'].errors?.['maxlength']){
+                  Last Name name should be less than
+                  {{employeeForm.controls['lastName'].errors?.['maxlength']?.requiredLength}}
+                  }
+                </div>
+                }
+              </div>
+            </div>
+               <div class="form-group row">
+              <label for="shifttme"
+                class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2">Gender</label>
+              <div class="col-sm-8  mb-2 mt-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="inlineRadio1" [value]=true formControlName="gender">
+                  <label class="form-check-label" for="inlineRadio1" >Male </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="inlineRadio2" [value]=false formControlName="gender">
+                  <label class="form-check-label" for="inlineRadio2"> Female</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="email" class="col-sm-2 w-25 col-form-label mb-4 mt-3">Email</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <input type="email" class="form-control" id="inputemail" formControlName="email">
+                @if(employeeForm.controls['email'].invalid && (employeeForm.controls['email'].touched ||
+                employeeForm.controls['email'].dirty))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['email'].errors?.['required']){
+                  Email is required.
+                  }
+                  @if(employeeForm.controls['email'].errors?.['email']){
+                  Invalid email address
+                  }
+                </div>
+                }
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="password" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Password</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <input type="password" class="form-control" id="inputpassword" formControlName="password">
+                @if(employeeForm.controls['password'].invalid && (employeeForm.controls['password'].touched ||
+                employeeForm.controls['password'].dirty))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['password'].errors?.['required']){
+                  Password is required.
+                  }
+                  @if(employeeForm.controls['password'].errors?.['minlength'] ){
+                  Password should be more than
+                  {{employeeForm.controls['password'].errors?.['minlength']?.requiredLength}}
+                  }
+                  @if(employeeForm.controls['password'].errors?.['maxlength'] ){
+                  Password should be less than
+                  {{employeeForm.controls['password'].errors?.['maxlength']?.requiredLength}}
+                  }
+
+                </div>
+                }
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="DOB" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">DOB</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <div class="form-group">
+
+                  <input id="startDate" class="form-control col-sm-3" type="date" [max]="maxDate" formControlName="dob" />
+                  @if(employeeForm.controls['dob'].invalid && (employeeForm.controls['dob'].touched ||
+                  employeeForm.controls['dob'].dirty))
+                  {
+                  <div class="error">
+                    @if(employeeForm.controls['dob'].errors?.['required']){
+                    Dob is required.
+                    }
+                    @if(employeeForm.controls['dob'].errors?.['dob']){
+                    Invalid DOB }
+                  </div>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="Department" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Department</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                  <select class="form-select col-sm-3" style="text-align: center;" formControlName="departmentId">
+                      <option  [ngValue]=0 >Select any role..</option>
+                      <option *ngFor="let item of department" [ngValue]="item.id">{{ item.name }}</option>
+                  </select>
+              </div>
+          </div>
+          
+            <div class="form-group row">
+              <label for="skills" class="col-sm-3 w-25 col-form-label justify-content-left mb-4 mt-3">skills</label>
+              <select data-mdb-select-init multiple class="custom-select col-sm-8 wt-600mb-4 mt-3 "
+                formControlName="skillIds">
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+
+              </select>
+            </div>
+            <div class="form-group row">
+              <label for="shifttime" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">Shift
+                Time</label>
+              <div class="col-sm-8 mb-4 mt-3">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"
+                    formControlName="shiftIds">
+                  <label class="form-check-label" for="inlineCheckbox1">9:00 AM - 6:00 PM</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                  <label class="form-check-label" for="inlineCheckbox2">10:00 AM - 7:00 PM</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+                  <label class="form-check-label" for="inlineCheckbox3">11:00 AM - 8:00 PM </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="shifttme"
+                class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2">UserActive</label>
+              <div class="col-sm-8  mb-2 mt-2">
+                <div class="form-radio form-radio-inline">
+                  <input class="form-radio-input" type="radio" id="inlineRadio" [value]=true formControlName="isActive">
+                  <label class="form-radio-label" for="inlineRadio" style="font-size: 18px; padding-left: 3%;">Is
+                    Active</label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" routerLink="/employee" (click)="SaveChanges()">Save
+            changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" >
     <p style="display: block; text-align: center; font-size:35px; font-weight: 800px; font-family:'Times New Roman', Times, serif ;">EMPLOYEE DASHBOARD</p>
  </div>
+ <div class="mat-elevation-z8">
+  <table mat-table [dataSource]="userArray" >
+
+  <!-- Position Column -->
+  <ng-container matColumnDef="firstName">
+    <th mat-header-cell *matHeaderCellDef> First Name </th>
+    <td mat-cell *matCellDef="let elemnent"> {{elemnent.firstName}} </td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="lastName">
+    <th mat-header-cell *matHeaderCellDef> Last Name </th>
+    <td mat-cell *matCellDef="let elemnent "> {{elemnent.lastName}} </td>
+  </ng-container>
+
+  <!-- Weight Column -->
+  <ng-container matColumnDef="gender">
+    <th mat-header-cell *matHeaderCellDef> Gender </th>
+    <td mat-cell *matCellDef="let elemnent"> {{getGenderLabel(elemnent.gender)}} </td>
+  </ng-container>
+
+  <!-- Symbol Column -->
+  <ng-container matColumnDef="dob">
+    <th mat-header-cell *matHeaderCellDef> Date Of Birth </th>
+    <td mat-cell *matCellDef="let elemnent"> {{elemnent.dob}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef> Email Address </th>
+    <td mat-cell *matCellDef="let elemnent "> {{elemnent.email}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="departmentId">
+    <th mat-header-cell *matHeaderCellDef> Department </th>
+    <td mat-cell *matCellDef="let elemnent " > {{ elemnent.departmentId}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="skill">
+    <th mat-header-cell *matHeaderCellDef> Skills </th>
+    <td mat-cell *matCellDef="let elemnent "> {{elemnent.skillIds}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="shift">
+    <th mat-header-cell *matHeaderCellDef> Shift Hours </th>
+    <td mat-cell *matCellDef="let elemnent "> {{elemnent.shiftIds}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="image">
+    <th mat-header-cell *matHeaderCellDef> Profile Image </th>
+    <td mat-cell *matCellDef="let elemnent"> {{elemnent.avatarUrl }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="activityStatus">
+    <th mat-header-cell *matHeaderCellDef> Activity Status </th>
+    <td mat-cell *matCellDef="let elemnent"> {{userActive(elemnent.isActive)}} </td>
+  </ng-container>
  
- <div class=".custom-table" style="margin-top: 20px;margin-left: auto;">
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef> Action </th>
+    <td mat-cell *matCellDef="let elemnent">
+      <button mat-icon-button matTooltip="Click to Edit" class="iconbutton" color="primary" data-bs-toggle="modal" data-bs-target="#exampleModal"  (click)="onUpdate(elemnent,elemnent.id)"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button matTooltip="Click to Delete" class="iconbutton"  color="warn" (click)="onDelete(elemnent.id)"> <mat-icon>delete</mat-icon></button>
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+  <mat-paginator [length]="100"
+  [pageSize]="10"
+  [pageSizeOptions]="[5, 10, 25, 100]"
+  aria-label="Select page">
+</mat-paginator>
+</div>
+ 
+ <!-- <div class=".custom-table" style="margin-top: 20px;margin-left: auto;">
      <div class="row  ">
          <div class="col-12">
              <table class="table table-bordered">
@@ -59,12 +341,12 @@
                          <td>{{users.lastName}}</td>
                          <td >{{getGenderLabel(users.gender)}}</td>
                          <td>{{users.email}}</td>
-                         <td>{{users.dob |  date :'short'}}</td>
+                         <td>{{users.dob |  date }}</td>
                          <td>{{users.departmentName}}</td>
                          <td>{{users.skills}}</td>
                          <td>{{users.shifttime}}</td>
                          <td >{{userActive(users.isActive)}}</td>
-                         <td><img [src]="transformImagePath(users.avatarUrl)" ></td>
+                         <td><img [src]="users.avatarUrl" ></td>
                        
                          <td><button class="btn  btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="onUpdate(users,users.id)" >Edit</button></td>
                          <td><button class="btn btn-danger" (click)="onDelete(users.id)">Delete</button></td>
@@ -78,7 +360,6 @@
 
      </div>
  </div> -->
- 
 
  
  
