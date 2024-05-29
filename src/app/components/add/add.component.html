@@ -1,0 +1,173 @@
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="employeeForm">
+
+        <div class="avatar" style="margin-left: 30%;">
+            <label for="file" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)">
+                <i class="ph ph-upload"></i>
+
+                <span>
+                    Drag & drop or browse your files
+                </span>
+            </label>
+            <div class="col-sm-4 text-center">
+                <div class="form-group row">
+                    <div class="kv-avatar ">
+                        <div class="file-loading col-sm-8 mb-4 mt-3 justify-content-left">
+                            <img [src]="url" height="200" style="justify-content: center;">
+                            <input id="avatar-1" name="avatar-1" type="file" (change)="onFileSelected($event)" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <mat-form-field>
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName">
+            </mat-form-field>
+            @if(employeeForm.controls['firstName'].invalid && (employeeForm.controls['firstName'].touched ||
+            employeeForm.controls['firstName'].dirty ))
+            {
+            <div class="error">
+                @if(employeeForm.controls['firstName'].errors?.['maxlength']){
+                First name should be less than
+                {{employeeForm.controls['firstName'].errors?.['maxlength']?.requiredLength}}
+                }
+            </div>
+            }
+
+        </div>
+        <div class="form-group row">
+            <mat-form-field>
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName">
+            </mat-form-field>
+            @if(employeeForm.controls['lastName'].invalid && (employeeForm.controls['lastName'].touched ||
+            employeeForm.controls['lastName'].dirty ))
+            {
+            <div class="error">
+                @if(employeeForm.controls['lastName'].errors?.['maxlength']){
+                Last Name name should be less than
+                {{employeeForm.controls['lastName'].errors?.['maxlength']?.requiredLength}}
+                }
+            </div>
+            }
+
+        </div>
+        <div class="form-group row">
+            <label for="Gender" class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2"> Gender : </label>
+            <div class="col-sm-8  mb-2 mt-2">
+                <mat-radio-group formControlName="gender">
+                    <mat-radio-button [value]=true>Male</mat-radio-button>
+                    <mat-radio-button [value]=false>Female</mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <div class="form-group row">
+            <mat-form-field>
+                <mat-label>Enter your email</mat-label>
+                <input matInput placeholder="pat@example.com" formControlName="email" required>
+            </mat-form-field>
+            @if(employeeForm.controls['email'].invalid && (employeeForm.controls['email'].touched ||
+            employeeForm.controls['email'].dirty))
+            {
+            <div class="error">
+                @if(employeeForm.controls['email'].errors?.['email']){
+                Invalid email address
+                }
+            </div>
+            }
+        </div>
+        <div class="form-group row">
+
+            <mat-form-field>
+                <mat-label>Enter your password</mat-label>
+                <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required>
+                <button mat-icon-button matSuffix (click)="clickEvent($event)" [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+            @if(employeeForm.controls['password'].invalid && (employeeForm.controls['password'].touched ||
+            employeeForm.controls['password'].dirty))
+            {
+            <div class="error">
+                @if(employeeForm.controls['password'].errors?.['minlength'] ){
+                Password should be more than
+                {{employeeForm.controls['password'].errors?.['minlength']?.requiredLength}}
+                }
+                @if(employeeForm.controls['password'].errors?.['maxlength'] ){
+                Password should be less than
+                {{employeeForm.controls['password'].errors?.['maxlength']?.requiredLength}}
+                }
+
+            </div>
+            }
+        </div>
+
+        <div class="form-group row">
+            <label for="DOB" class="col-sm-2 w-25 col-form-label justify-content-left mb-4 mt-3">DOB</label>
+            <div class="col-sm-8 mb-4 mt-3">
+              <div class="form-group">
+
+                <input type="datetime-local" class="form-control date-picker" id="myDate"
+                  (change)="handleDateChange($event)" formControlName="dob">
+                @if(employeeForm.controls['dob'].invalid && (employeeForm.controls['dob'].touched ||
+                employeeForm.controls['dob'].dirty))
+                {
+                <div class="error">
+                  @if(employeeForm.controls['dob'].errors?.['required']){
+                  Dob is required.
+                  }
+                  @if(employeeForm.controls['dob'].errors?.['dob']){
+                  Invalid DOB }
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+
+        <div class="form-group row">
+            <mat-form-field>
+                <mat-label>Select department</mat-label>
+                <mat-select formControlName="departmentId" panelClass="custom-mat-select-panel" >
+                    <mat-option *ngFor="let item of department" [value]="item.id"required>{{ item.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+        <!-- <div class="form-group row">
+            <mat-form-field>
+                <mat-label>Skills</mat-label>
+                <mat-select formControlName="skillIds" multiple>
+                    <mat-option>Select All</mat-option>
+                    <mat-option [value]="1">ASP.Net MVC</mat-option>
+                    <mat-option [value]="2">Java</mat-option>
+                    <mat-option [value]="3">Php Framework</mat-option>
+                    <mat-option [value]="4">Python</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="form-group row">
+            <mat-form-field>
+                <mat-label>Select preferred working shift</mat-label>
+                <mat-select formControlName="shiftIds" multiple>
+                    <mat-option>Select All</mat-option>
+                    <mat-option [value]="1">9:00 AM - 18:00 PM</mat-option>
+                    <mat-option [value]="2">10:00 AM - 19:00 PM</mat-option>
+                    <mat-option [value]="3">11:00 AM - 20:00 PM</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div> -->
+        <div class="form-group row">
+            <div class="col-sm-8  mb-2 mt-2">
+                <label for="ACTIVE" class="col-sm-2 w-25 col-form-label justify-content-left mb-2 mt-2"> Activity : </label>
+                <mat-radio-group formControlName="isActive" >
+                    <mat-radio-button [value]=true>Employee is Active</mat-radio-button>
+                  
+                </mat-radio-group>
+            </div>
+        </div>
+        <button mat-raised-button color="success" (click)="SaveChanges()" mat-dialog-close [disabled]="formIsValid">Save</button>
+    </form>
+</mat-dialog-content>
