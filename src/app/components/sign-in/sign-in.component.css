@@ -23,3 +23,37 @@
     text-transform: uppercase;
     font-family: 'Times New Roman', Times, serif;
 }
+.form-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.form-full-width {
+  width: 100%;
+}
+
+input.form-right-align::-webkit-outer-spin-button,
+input.form-right-align::-webkit-inner-spin-button {
+  display: none;
+}
+
+input.form-right-align {
+  -moz-appearance: textfield;
+}
+.form-container mat-form-field + mat-form-field {
+  margin-left: 8px;
+}
+
+.form-right-align {
+  text-align: right;
+}
+
+input.form-right-align::-webkit-outer-spin-button,
+input.form-right-align::-webkit-inner-spin-button {
+  display: none;
+}
+
+input.form-right-align {
+  -moz-appearance: textfield;
+}

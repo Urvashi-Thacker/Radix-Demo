@@ -1,4 +1,4 @@
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
@@ -8,9 +8,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output, input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {  Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastrService } from 'ngx-toastr';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -33,7 +33,6 @@ export class AddComponent {
   userArray: any[] = []
   userToDelete: number = 1
   value: boolean = true
-  isEdit: boolean = false
   department: any[] = []
   departmentname: string = ""
   url = "../../../assets/images/sign-up.svg"
@@ -41,14 +40,51 @@ export class AddComponent {
   maxDate: string
   wasFormChanged = false
   isActive: boolean = false
-  formIsValid : boolean=false
-  
+  formIsValid: boolean = false
+  isEdit: boolean = true
+
+  isValid: boolean = false;
+
+
   ngOnInit() {
     this.GetDepartment()
     this.GetAll()
-    this.employeeForm.value
+    debugger
+    if (this.data && this.data.userId) {
+      this.LoadUser(this.data.userId)
+    }
   }
-  constructor(private http: HttpClient, private toastr: ToastrService, private router : Router) {
+  LoadUser(id: any) {
+    debugger
+    this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(()=>{
+
+      this.http.get(`https://localhost:7071/User/GetByID/${id}`).subscribe(add => {
+        debugger
+        if (add != null && Array.isArray(add) && add.length > 0) {
+          debugger
+          const obj = add[0]
+          console.log(add)
+          this.employeeForm.patchValue
+            ({
+              id: obj.id,
+              firstName: obj.firstName,
+              lastName: obj.lastName,
+              gender: obj.gender,
+              email: obj.email,
+              password: "sdfdfsaa",
+              dob: obj.dob,
+              departmentId: obj.department,
+              skillIds: null, shiftIds: null,
+              isActive: obj.isActive,
+              avatarUrl: obj.avatarUrl
+            })
+        }
+      })
+    })
+  }
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+
     const today = new Date();
     this.maxDate = today.toISOString().split('T')[0];
     this.employeeForm = new FormGroup({
@@ -96,10 +132,10 @@ export class AddComponent {
     this.selectedFile = event.target.files[0];
   }
 
- 
+
   get departmentName() {
     return this.employeeForm.get("departmentId");
-}
+  }
 
   formChanged() {
     this.wasFormChanged = true;
@@ -110,6 +146,7 @@ export class AddComponent {
   }
 
   SaveChanges() {
+    this.isValid = this.employeeForm.invalid;
     const obj = this.employeeForm.value;
     debugger;
     if (this.selectedFile != null) {
@@ -128,7 +165,9 @@ export class AddComponent {
   }
   addOrAlterUser(obj: any) {
     debugger;
-    if (obj?.id != null) {
+
+
+    if (obj.id != null) {
       this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
         (res: any) => {
           // Assuming GetAll() is a method to refresh user data
@@ -142,18 +181,20 @@ export class AddComponent {
     } else {
       debugger
       this.http.post('https://localhost:7071/User/Add', obj).subscribe((res: any) => {
-       
-          this.toastr.success("Login Successfully",'Success')
-          this.formIsValid = true
-         
-      
-        
-      });
+        // Assuming GetAll() is a method to refresh user data
+        this.toastr.success('Added Successfully', 'Success');
+      },
+        (error) => {
+          console.error('Adding request failed:', error);
+          this.toastr.error('Failed to add user', 'Error');
+        }
+      );
     }
+
   }
 
 
- 
+
 
   onDelete(userId: number) {
     this.toastr.warning('Are you sure you want to delete?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
@@ -176,17 +217,12 @@ export class AddComponent {
     return value ? 'Male' : 'Female'
   }
 
-  onUpdate(data: any, userId: number) {
-    this.isEdit = true
-    this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(() => {
-      const formData = this.employeeForm.setValue({ id: data.id, firstName: data.firstName, lastName: data.lastName, gender: data.gender, email: data.email, password: "sdfdfsaa", dob: data.dob, departmentId: this.department, skillIds: null, shiftIds: null, isActive: data.isActive, avatarUrl: data.avatarUrl })
-    });
-  }
+
 
   GetAll() {
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
       this.userArray = res
-    
+
     })
   }
 
@@ -195,7 +231,7 @@ export class AddComponent {
       debugger
       console.log(res)
       this.department = res
-      
+
     })
   }
 
@@ -203,4 +239,5 @@ export class AddComponent {
     this.hide = !this.hide;
     event.stopPropagation();
   }
+
 }

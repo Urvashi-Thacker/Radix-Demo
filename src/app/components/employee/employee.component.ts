@@ -1,51 +1,54 @@
 
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation, numberAttribute } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit  } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastrService } from 'ngx-toastr';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatRadioModule} from '@angular/material/radio';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatSelectModule} from '@angular/material/select';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
 import { SignInComponent } from '../sign-in/sign-in.component';
 import { AddComponent } from '../add/add.component';
-import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import { MatTableModule} from '@angular/material/table';
-import { Employee } from '../../interfaces/employee';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [MatTableModule,MatPaginator,MatPaginatorModule,MatButtonModule,MatDialogModule,MatInputModule,MatFormFieldModule,MatRadioModule,MatIconModule,MatDatepickerModule,
-    MatSelectModule,  RouterLink, RouterLinkActive, ReactiveFormsModule, HttpClientModule, CommonModule, FileUploadModule],
-    templateUrl: './employee.component.html',
-  
-    styleUrl: './employee.component.css'
-    
+  imports: [MatTableModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatRadioModule, MatIconModule, MatDatepickerModule,
+    MatSelectModule, RouterLink, RouterLinkActive, ReactiveFormsModule, HttpClientModule, CommonModule, FileUploadModule],
+  templateUrl: './employee.component.html',
+
+  styleUrl: './employee.component.css'
+
 })
-export class EmployeeComponent   implements OnInit {
+export class EmployeeComponent implements OnInit {
   departmentData: { [key: string]: string } = {};
-  displayedColumns: string[] = ['firstName', 'lastName', 'gender','dob', 'email','departmentId','skill', 'shift', 'image','activityStatus', 'action'];
-  userArray: any[]=[];
-  department: any[]=[];
+  displayedColumns: string[] = ['firstName', 'lastName', 'gender', 'dob', 'email', 'departmentId', 'skill', 'shift', 'image', 'activityStatus', 'action'];
+  userArray: any[] = [];
+  department: any[] = [];
+  
+  
 
   ngOnInit() {
-   
+
     this.GetAll()
     
   }
 
-  openDialog(event : Event) {
-    event.preventDefault()
+  openDialog(event: Event) {
+    debugger
+    event.preventDefault();
+
     const dialogRef = this.dialog.open(AddComponent, {
-    
+
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -56,7 +59,7 @@ export class EmployeeComponent   implements OnInit {
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
       debugger
       this.userArray = res
-    
+
     })
   }
 
@@ -76,34 +79,30 @@ export class EmployeeComponent   implements OnInit {
       );
     });
   }
-  updateUser(userId: number, data : any){
-    this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(() => {
-      debugger
-      this.http.put(`https://localhost:7071/User/Update/${userId}`, data).subscribe((res: any) => {
-        // Assuming GetAll() is a method to refresh user data
-        this.toastr.success('Updated Successfully', 'Success');
-      },
-  )
-      //const formData = this.employeeForm.setValue({ id: data.id, firstName: data.firstName, lastName: data.lastName, gender: data.gender, email: data.email, password: "sdfdfsaa", dob: data.dob, departmentId: this.department, skillIds: null, shiftIds: null, isActive: data.isActive, avatarUrl: data.avatarUrl })
-      this.userArray.fill({ userId: data.id, firstName: data.firstName, lastName: data.lastName, gender: data.gender, email: data.email, password: "sdfdfsaa", dob: data.dob, departmentId: this.department, skillIds: null, shiftIds: null, isActive: data.isActive, avatarUrl: data.avatarUrl })
+  updateUser(userId: number) {
+    debugger
+    const dialogRef = this.dialog.open(AddComponent, {
+      data: {
+        userId: userId,
+      }
     });
-    }
-
-  onUpdate(userId : any ) {
-    
   }
 
- 
+  onUpdate(userId: any) {
+   
+  }
+
+
   userActive(value: boolean): string {
     return value ? 'ACTIVE' : 'INACTIVE'
   }
   getGenderLabel(value: boolean): string {
     return value ? 'Male' : 'Female'
   }
- 
-  constructor(public dialog:MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
 
-   
-} 
-  
+  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+
+
+  }
+
 }
