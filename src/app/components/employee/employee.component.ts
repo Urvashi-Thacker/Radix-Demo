@@ -1,7 +1,6 @@
-
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit  } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -14,33 +13,38 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
-import { SignInComponent } from '../sign-in/sign-in.component';
 import { AddComponent } from '../add/add.component';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
+
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [MatTableModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatRadioModule, MatIconModule, MatDatepickerModule,
+  imports: [MatCardModule, MatTableModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatRadioModule, MatIconModule, MatDatepickerModule,
     MatSelectModule, RouterLink, RouterLinkActive, ReactiveFormsModule, HttpClientModule, CommonModule, FileUploadModule],
   templateUrl: './employee.component.html',
 
   styleUrl: './employee.component.css'
-
+  
 })
 export class EmployeeComponent implements OnInit {
   departmentData: { [key: string]: string } = {};
   displayedColumns: string[] = ['firstName', 'lastName', 'gender', 'dob', 'email', 'departmentId', 'skill', 'shift', 'image', 'activityStatus', 'action'];
   userArray: any[] = [];
   department: any[] = [];
+  users: any[] = []
   
   
+    constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+    }
+
 
   ngOnInit() {
 
+    this.GetDepartment()
     this.GetAll()
-    
   }
 
   openDialog(event: Event) {
@@ -58,17 +62,47 @@ export class EmployeeComponent implements OnInit {
   GetAll() {
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
       debugger
-      this.userArray = res
+      this.users = res
+      this.userArray = this.users.map(user => {
+        const departmentnm = this.department.find(dp => dp.id === user.departmentId);
+        debugger
+        const modified = {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          gender: user.gender,
+          dob: user.dob,
+          email: user.email,
+          departmentId: user.departmentId,
+          skillIds: user.skillIds,
+          shiftIds: user.shiftIds,
+          avatarUrl: user.avatarUrl,
+          isActive: user.isActive,
+          departmentName: departmentnm ? departmentnm.name : 'unkown'
+        }
+        return modified
+
+      })
 
     })
   }
+
+
+
+  imageShow(imageUrl: string) {
+
+    const baseUrl = 'https://localhost:7071/';
+    const fullImageUrl = `${baseUrl}${imageUrl}`;
+    return fullImageUrl;
+  }
+
+
 
   onDelete(userId: number) {
     debugger
     this.toastr.warning('Are you sure you want to delete?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
       this.http.delete(`https://localhost:7071/User/Delete/${userId}`).subscribe(
         (res: any) => {
-          //this.GetAll(); // Assuming GetAll() is a method to refresh user data
           this.toastr.success('Deleted Successfully', 'Success');
           this.GetAll()
         },
@@ -89,7 +123,16 @@ export class EmployeeComponent implements OnInit {
   }
 
   onUpdate(userId: any) {
-   
+
+  }
+  GetDepartment() {
+    debugger
+    this.http.get("https://localhost:7071/Department/GetDepartmentList").subscribe((res: any) => {
+      debugger
+      console.log(res)
+      this.department = res
+      this.GetAll()
+    })
   }
 
 
@@ -98,11 +141,6 @@ export class EmployeeComponent implements OnInit {
   }
   getGenderLabel(value: boolean): string {
     return value ? 'Male' : 'Female'
-  }
-
-  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
-
-
   }
 
 }

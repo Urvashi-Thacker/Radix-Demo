@@ -42,7 +42,6 @@ export class AddComponent {
   isActive: boolean = false
   formIsValid: boolean = false
   isEdit: boolean = true
-
   isValid: boolean = false;
 
 
@@ -90,19 +89,16 @@ export class AddComponent {
     this.employeeForm = new FormGroup({
       id: new FormControl(),
       firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
-      lastName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
+      lastName: new FormControl('', [Validators.required,Validators.maxLength(12)]),
       gender: new FormControl('', Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]),
+      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$')]),
       departmentId: new FormControl(parseInt, [Validators.required]),
-      dob: new FormControl('', [
-        Validators.required, Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/
-        )
-      ]),
+      dob: new FormControl('', [Validators.required, Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/)]),
       skillIds: new FormControl([], Validators.required),
       shiftIds: new FormControl([], Validators.required,),
       isActive: new FormControl('', Validators.required),
-      //departmentName : new FormControl('',Validators.required)
+      departmentName : new FormControl('',Validators.required)
     })
 
   }
@@ -148,6 +144,7 @@ export class AddComponent {
   SaveChanges() {
     this.isValid = this.employeeForm.invalid;
     const obj = this.employeeForm.value;
+    
     debugger;
     if (this.selectedFile != null) {
       const formData = new FormData();
@@ -164,14 +161,11 @@ export class AddComponent {
     }
   }
   addOrAlterUser(obj: any) {
-    debugger;
-
-
     if (obj.id != null) {
       this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
         (res: any) => {
-          // Assuming GetAll() is a method to refresh user data
           this.toastr.success('Updated Successfully', 'Success');
+          this.GetAll()
         },
         (error) => {
           console.error('Update request failed:', error);
@@ -181,8 +175,8 @@ export class AddComponent {
     } else {
       debugger
       this.http.post('https://localhost:7071/User/Add', obj).subscribe((res: any) => {
-        // Assuming GetAll() is a method to refresh user data
         this.toastr.success('Added Successfully', 'Success');
+        this.GetAll()
       },
         (error) => {
           console.error('Adding request failed:', error);
@@ -200,8 +194,8 @@ export class AddComponent {
     this.toastr.warning('Are you sure you want to delete?Tap to confirm', 'Confirmation').onTap.subscribe(() => {
       this.http.delete(`https://localhost:7071/User/Delete/${userId}`).subscribe(
         (res: any) => {
-          this.GetAll(); // Assuming GetAll() is a method to refresh user data
           this.toastr.success('Deleted Successfully', 'Success');
+          this.GetAll();
         },
         (error) => {
           console.error('Delete request failed:', error);

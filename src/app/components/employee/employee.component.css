@@ -184,3 +184,6 @@
 .custom-mat-select-panel {
   z-index: 0; /* Adjust as needed */
 }
+.mat-card-title{
+  color: blue;
+}
