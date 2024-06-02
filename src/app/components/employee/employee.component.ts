@@ -27,7 +27,7 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './employee.component.html',
 
   styleUrl: './employee.component.css'
-  
+
 })
 export class EmployeeComponent implements OnInit {
   departmentData: { [key: string]: string } = {};
@@ -35,10 +35,10 @@ export class EmployeeComponent implements OnInit {
   userArray: any[] = [];
   department: any[] = [];
   users: any[] = []
-  
-  
-    constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
-    }
+
+
+  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+  }
 
 
   ngOnInit() {
@@ -112,6 +112,9 @@ export class EmployeeComponent implements OnInit {
         }
       );
     });
+  }
+  errorImageHandler(event: any) {
+    event.target.src = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
   }
   updateUser(userId: number) {
     debugger

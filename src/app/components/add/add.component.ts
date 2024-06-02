@@ -35,7 +35,7 @@ export class AddComponent {
   value: boolean = true
   department: any[] = []
   departmentname: string = ""
-  url = "../../../assets/images/sign-up.svg"
+  url = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
   hide = true
   maxDate: string
   wasFormChanged = false
@@ -53,16 +53,41 @@ export class AddComponent {
       this.LoadUser(this.data.userId)
     }
   }
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+
+    const today = new Date();
+    this.maxDate = today.toISOString().split('T')[0];
+    this.employeeForm = new FormGroup({
+      id: new FormControl(),
+      firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
+      lastName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
+      gender: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$')]),
+      departmentId: new FormControl(parseInt, [Validators.required]),
+      dob: new FormControl('', [Validators.required, Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/)]),
+      skillIds: new FormControl([], Validators.required),
+      shiftIds: new FormControl([], Validators.required,),
+      isActive: new FormControl('', Validators.required),
+      departmentName: new FormControl('', Validators.required)
+    })
+
+  }
+
+  errorImageHandler(event: any) {
+    event.target.src = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
+  }
+
   LoadUser(id: any) {
     debugger
-    this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(()=>{
+    this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(() => {
 
       this.http.get(`https://localhost:7071/User/GetByID/${id}`).subscribe(add => {
         debugger
         if (add != null && Array.isArray(add) && add.length > 0) {
           debugger
           const obj = add[0]
-          console.log(add)
           this.employeeForm.patchValue
             ({
               id: obj.id,
@@ -72,36 +97,25 @@ export class AddComponent {
               email: obj.email,
               password: "sdfdfsaa",
               dob: obj.dob,
-              departmentId: obj.department,
+              departmentId: obj.departmentId,
               skillIds: null, shiftIds: null,
               isActive: obj.isActive,
-              avatarUrl: obj.avatarUrl
+              avatarUrl: obj.avatarUrl,
             })
+          this.url = this.imageShow(obj.avatarUrl);
+          console.log(this.employeeForm);
         }
       })
     })
   }
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+  imageShow(imageUrl: string) {
 
-    const today = new Date();
-    this.maxDate = today.toISOString().split('T')[0];
-    this.employeeForm = new FormGroup({
-      id: new FormControl(),
-      firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
-      lastName: new FormControl('', [Validators.required,Validators.maxLength(12)]),
-      gender: new FormControl('', Validators.required),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$')]),
-      departmentId: new FormControl(parseInt, [Validators.required]),
-      dob: new FormControl('', [Validators.required, Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/)]),
-      skillIds: new FormControl([], Validators.required),
-      shiftIds: new FormControl([], Validators.required,),
-      isActive: new FormControl('', Validators.required),
-      departmentName : new FormControl('',Validators.required)
-    })
-
+    const baseUrl = 'https://localhost:7071/';
+    const fullImageUrl = `${baseUrl}${imageUrl}`;
+    return fullImageUrl;
   }
+
 
   get passwordInput() { return this.employeeForm.get('password'); }
 
@@ -144,7 +158,7 @@ export class AddComponent {
   SaveChanges() {
     this.isValid = this.employeeForm.invalid;
     const obj = this.employeeForm.value;
-    
+
     debugger;
     if (this.selectedFile != null) {
       const formData = new FormData();
