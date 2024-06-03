@@ -5,10 +5,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Inject, Input, Output, input } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output, ViewChild, input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -43,11 +43,15 @@ export class AddComponent {
   formIsValid: boolean = false
   isEdit: boolean = true
   isValid: boolean = false;
-
+  skills:  any[] = []
+  workingShifts: any[] = []
+  
 
   ngOnInit() {
     this.GetDepartment()
     this.GetAll()
+    this.GetSkills()
+    this.GetWorkingShifts()
     debugger
     if (this.data && this.data.userId) {
       this.LoadUser(this.data.userId)
@@ -95,7 +99,7 @@ export class AddComponent {
               lastName: obj.lastName,
               gender: obj.gender,
               email: obj.email,
-              password: "sdfdfsaa",
+              password: obj.password,
               dob: obj.dob,
               departmentId: obj.departmentId,
               skillIds: null, shiftIds: null,
@@ -158,7 +162,6 @@ export class AddComponent {
   SaveChanges() {
     this.isValid = this.employeeForm.invalid;
     const obj = this.employeeForm.value;
-
     debugger;
     if (this.selectedFile != null) {
       const formData = new FormData();
@@ -178,8 +181,8 @@ export class AddComponent {
     if (obj.id != null) {
       this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
         (res: any) => {
-          this.toastr.success('Updated Successfully', 'Success');
           this.GetAll()
+          this.toastr.success('Updated Successfully', 'Success');
         },
         (error) => {
           console.error('Update request failed:', error);
@@ -189,8 +192,8 @@ export class AddComponent {
     } else {
       debugger
       this.http.post('https://localhost:7071/User/Add', obj).subscribe((res: any) => {
-        this.toastr.success('Added Successfully', 'Success');
         this.GetAll()
+        this.toastr.success('Added Successfully', 'Success');
       },
         (error) => {
           console.error('Adding request failed:', error);
@@ -242,10 +245,27 @@ export class AddComponent {
 
     })
   }
+  GetSkills() {
+    this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
+      debugger
+      console.log(res)
+      this.skills = res
+
+    })
+  }
+  GetWorkingShifts() {
+    this.http.get("https://localhost:7071/WorkingShift/GetWorkingShiftList").subscribe((res: any) => {
+      debugger
+      console.log(res)
+      this.workingShifts = res
+
+    })
+  }
 
   clickEvent(event: MouseEvent) {
     this.hide = !this.hide;
     event.stopPropagation();
   }
+ 
 
 }

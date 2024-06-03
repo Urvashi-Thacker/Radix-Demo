@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -35,7 +35,8 @@ export class EmployeeComponent implements OnInit {
   userArray: any[] = [];
   department: any[] = [];
   users: any[] = []
-
+  skills: any[] = [];
+  workingShifts : any[] =[]
 
   constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
   }
@@ -45,6 +46,8 @@ export class EmployeeComponent implements OnInit {
 
     this.GetDepartment()
     this.GetAll()
+    this.GetSkills()
+    this.GetWorkingShifts()
   }
 
   openDialog(event: Event) {
@@ -137,6 +140,14 @@ export class EmployeeComponent implements OnInit {
       this.GetAll()
     })
   }
+  GetSkills() {
+    this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
+      debugger
+      console.log(res)
+      this.skills = res
+
+    })
+  }
 
 
   userActive(value: boolean): string {
@@ -146,4 +157,12 @@ export class EmployeeComponent implements OnInit {
     return value ? 'Male' : 'Female'
   }
 
+  GetWorkingShifts() {
+    this.http.get("https://localhost:7071/WorkingShift/GetWorkingShiftList").subscribe((res: any) => {
+      debugger
+      console.log(res)
+      this.workingShifts = res
+
+    })
+  }
 }
