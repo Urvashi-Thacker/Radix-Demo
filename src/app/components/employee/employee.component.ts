@@ -17,6 +17,7 @@ import { AddComponent } from '../add/add.component';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
+import { ExportService } from '../../Services/export.service';
 
 
 @Component({
@@ -38,7 +39,9 @@ export class EmployeeComponent implements OnInit {
   skills: any[] = [];
   workingShifts : any[] =[]
 
-  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+  
+
+  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router , private exportService : ExportService) {
   }
 
 
@@ -164,5 +167,14 @@ export class EmployeeComponent implements OnInit {
       this.workingShifts = res
 
     })
+  }
+
+  exportToCSV(){
+    debugger
+    this.exportService.exportToCSV(this.userArray,'Employee.csv')
+  }
+  exportToExcel(){
+    debugger 
+    this.exportService.exportToExcel(this.userArray,'Employee.xlsx')
   }
 }

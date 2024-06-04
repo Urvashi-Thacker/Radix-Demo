@@ -30,9 +30,15 @@
       EMPLOYEE  DASHBOARD</p>
   </div> 
    -->
+   
   <mat-card-title
     style="display: block; text-align: center; font-size:35px; font-weight: 900px; font-family:'Times New Roman', Times, serif ; margin-bottom: 30px;">Employee
     Dashboard</mat-card-title>
+    <div class="export mb-3">
+      <button mat-raised-button color="primary" (click)="exportToCSV()" >Export to CSV</button>
+      <button mat-raised-button color="primary" (click)="exportToExcel()" style="margin-left: 30px;" >Export to Excel</button>
+    </div>
+ 
 
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="userArray">
@@ -108,9 +114,13 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-   
-    <!-- <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
-    </mat-paginator> -->
+
+    <mat-paginator [length]="100"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 25, 100]"
+    aria-label="Select page">
+</mat-paginator>
+
   </div>
 
 
