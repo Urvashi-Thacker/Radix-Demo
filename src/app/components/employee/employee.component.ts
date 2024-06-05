@@ -37,11 +37,11 @@ export class EmployeeComponent implements OnInit {
   department: any[] = [];
   users: any[] = []
   skills: any[] = [];
-  workingShifts : any[] =[]
+  workingShifts: any[] = []
 
-  
 
-  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router , private exportService : ExportService) {
+
+  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router, private exportService: ExportService) {
   }
 
 
@@ -82,6 +82,8 @@ export class EmployeeComponent implements OnInit {
           departmentId: user.departmentId,
           skillIds: user.skillIds,
           shiftIds: user.shiftIds,
+          userSkillNames: user.userSkillNames,
+          userWorkingShiftNames: user.userWorkingShiftNames,
           avatarUrl: user.avatarUrl,
           isActive: user.isActive,
           departmentName: departmentnm ? departmentnm.name : 'unkown'
@@ -169,12 +171,12 @@ export class EmployeeComponent implements OnInit {
     })
   }
 
-  exportToCSV(){
+  exportToCSV() {
     debugger
-    this.exportService.exportToCSV(this.userArray,'Employee.csv')
+    this.exportService.exportToCSV(this.userArray, 'Employee.csv')
   }
-  exportToExcel(){
-    debugger 
-    this.exportService.exportToExcel(this.userArray,'Employee.xlsx')
+  exportToExcel() {
+    debugger
+    this.exportService.exportToExcel(this.userArray, 'Employee.xlsx')
   }
 }
