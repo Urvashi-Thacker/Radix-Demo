@@ -47,8 +47,8 @@ export class EmployeeComponent implements OnInit {
 
   ngOnInit() {
 
-    this.GetDepartment()
     this.GetAll()
+    this.GetDepartment()
     this.GetSkills()
     this.GetWorkingShifts()
   }
@@ -73,6 +73,7 @@ export class EmployeeComponent implements OnInit {
         const departmentnm = this.department.find(dp => dp.id === user.departmentId);
         debugger
         const modified = {
+          
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -80,11 +81,11 @@ export class EmployeeComponent implements OnInit {
           dob: user.dob,
           email: user.email,
           departmentId: user.departmentId,
-          skillIds: user.skillIds,
-          shiftIds: user.shiftIds,
+          skillIds: user.userSkills,
+          shiftIds: user.userWorkingShifts,
           userSkillNames: user.userSkillNames,
           userWorkingShiftNames: user.userWorkingShiftNames,
-          avatarUrl: user.avatarUrl,
+         avatarUrl: user.avatarUrl,
           isActive: user.isActive,
           departmentName: departmentnm ? departmentnm.name : 'unkown'
         }
@@ -137,9 +138,9 @@ export class EmployeeComponent implements OnInit {
 
   }
   GetDepartment() {
-    debugger
+    //debugger
     this.http.get("https://localhost:7071/Department/GetDepartmentList").subscribe((res: any) => {
-      debugger
+    //  debugger
       console.log(res)
       this.department = res
       this.GetAll()
@@ -147,7 +148,7 @@ export class EmployeeComponent implements OnInit {
   }
   GetSkills() {
     this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
-      debugger
+      //debugger
       console.log(res)
       this.skills = res
 
@@ -164,7 +165,7 @@ export class EmployeeComponent implements OnInit {
 
   GetWorkingShifts() {
     this.http.get("https://localhost:7071/WorkingShift/GetWorkingShiftList").subscribe((res: any) => {
-      debugger
+      //debugger
       console.log(res)
       this.workingShifts = res
 

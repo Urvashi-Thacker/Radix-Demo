@@ -13,7 +13,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastrService } from 'ngx-toastr';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'app-add',
@@ -45,8 +45,7 @@ export class AddComponent {
   isValid: boolean = false;
   skills:  any[] = []
   workingShifts: any[] = []
-  
-
+  obj : any
   ngOnInit() {
     this.GetDepartment()
     this.GetAll()
@@ -57,6 +56,10 @@ export class AddComponent {
       this.LoadUser(this.data.userId)
     }
   }
+  skillIdsControl = new FormControl();
+  @ViewChild('skillsSelect') skillsSelect!: MatSelect;
+
+  
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient, private toastr: ToastrService, private router: Router) {
 
@@ -78,7 +81,14 @@ export class AddComponent {
     })
 
   }
-
+  onSelectAll() {
+    if (this.employeeForm.get('skillIds')?.value === 'selectAll') {
+      const allSkillIds = this.skills.map(item => item.id);
+      this.employeeForm.get('skillIds')?.setValue(allSkillIds);
+      // Manually update selected options in mat-select
+      this.skillsSelect.writeValue(allSkillIds);
+    }
+  }
   errorImageHandler(event: any) {
     event.target.src = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
   }
@@ -86,28 +96,32 @@ export class AddComponent {
   LoadUser(id: any) {
     debugger
     this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(() => {
-
+debugger
       this.http.get(`https://localhost:7071/User/GetByID/${id}`).subscribe(add => {
         debugger
-        if (add != null && Array.isArray(add) && add.length > 0) {
+        this.obj = add
+        console.log(add)
+        if ( add) {
           debugger
-          const obj = add[0]
+        
+          const shiftIdsArray = this.obj.userWorkingShifts.split(',').map(Number);
+          const skillIdsArray = this.obj.userSkills.split(',').map(Number);
           this.employeeForm.patchValue
             ({
-              id: obj.id,
-              firstName: obj.firstName,
-              lastName: obj.lastName,
-              gender: obj.gender,
-              email: obj.email,
-              password: obj.password,
-              dob: obj.dob,
-              departmentId: obj.departmentId,
-              skillIds: null, shiftIds: null,
-              isActive: obj.isActive,
-              avatarUrl: obj.avatarUrl,
+              id: this.obj.id,
+              firstName: this.obj.firstName,
+              lastName: this.obj.lastName,
+              gender: this.obj.gender,
+              email: this.obj.email,
+              password: this.obj.password,
+              dob: this.obj.dob,
+              departmentId: this.obj.departmentId,
+              skillIds: skillIdsArray, shiftIds: shiftIdsArray,
+              isActive: this.obj.isActive,
+              avatarUrl: this.obj.avatarUrl,
             })
-          this.url = this.imageShow(obj.avatarUrl);
-          console.log(this.employeeForm);
+          this.url = this.imageShow(this.obj  .avatarUrl);
+         console.log(this.employeeForm.value)
         }
       })
     })
@@ -119,7 +133,7 @@ export class AddComponent {
     const fullImageUrl = `${baseUrl}${imageUrl}`;
     return fullImageUrl;
   }
-
+  
 
   get passwordInput() { return this.employeeForm.get('password'); }
 
@@ -232,6 +246,7 @@ export class AddComponent {
 
   GetAll() {
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
+      //debugger
       this.userArray = res
 
     })
@@ -239,7 +254,7 @@ export class AddComponent {
 
   GetDepartment() {
     this.http.get("https://localhost:7071/Department/GetDepartmentList").subscribe((res: any) => {
-      debugger
+      //debugger
       console.log(res)
       this.department = res
 
@@ -247,7 +262,7 @@ export class AddComponent {
   }
   GetSkills() {
     this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
-      debugger
+     // debugger
       console.log(res)
       this.skills = res
 
@@ -255,7 +270,7 @@ export class AddComponent {
   }
   GetWorkingShifts() {
     this.http.get("https://localhost:7071/WorkingShift/GetWorkingShiftList").subscribe((res: any) => {
-      debugger
+      //debugger
       console.log(res)
       this.workingShifts = res
 

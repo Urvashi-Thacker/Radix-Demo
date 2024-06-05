@@ -132,15 +132,15 @@
       </mat-form-field>
 
     </div>
-     <div class="form-group row">
-            <mat-form-field>
-                <mat-label>Skills</mat-label>
-                <mat-select formControlName="skillIds" multiple>
-                    <mat-option>Select All</mat-option>
-                    <mat-option *ngFor="let item of skills" [value]="item.id" required>{{ item.skill }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+    <div class="form-group row">
+      <mat-form-field>
+        <mat-label>Skills</mat-label>
+        <mat-select formControlName="skillIds" multiple #skillsSelect>
+          <mat-option [value]="'selectAll'">Select All</mat-option>
+          <mat-option *ngFor="let item of skills" [value]="item.id" required>{{ item.skill }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
         <div class="form-group row">
             <mat-form-field>
                 <mat-label>Select preferred working shift</mat-label>
