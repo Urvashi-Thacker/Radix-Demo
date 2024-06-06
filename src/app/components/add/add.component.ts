@@ -45,7 +45,10 @@ export class AddComponent {
   isValid: boolean = false;
   skills:  any[] = []
   workingShifts: any[] = []
-  obj : any
+  skillIdsControl = new FormControl([]);
+  skillsIds : string[]=[]
+obj : any
+
   ngOnInit() {
     this.GetDepartment()
     this.GetAll()
@@ -56,8 +59,6 @@ export class AddComponent {
       this.LoadUser(this.data.userId)
     }
   }
-  skillIdsControl = new FormControl();
-  @ViewChild('skillsSelect') skillsSelect!: MatSelect;
 
   
 
@@ -81,14 +82,7 @@ export class AddComponent {
     })
 
   }
-  onSelectAll() {
-    if (this.employeeForm.get('skillIds')?.value === 'selectAll') {
-      const allSkillIds = this.skills.map(item => item.id);
-      this.employeeForm.get('skillIds')?.setValue(allSkillIds);
-      // Manually update selected options in mat-select
-      this.skillsSelect.writeValue(allSkillIds);
-    }
-  }
+ 
   errorImageHandler(event: any) {
     event.target.src = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
   }
@@ -104,8 +98,8 @@ debugger
         if ( add) {
           debugger
         
-          const shiftIdsArray = this.obj.userWorkingShifts.split(',').map(Number);
-          const skillIdsArray = this.obj.userSkills.split(',').map(Number);
+          const shiftIdsArray = this.obj.userWorkingShifts?.split(',').map(Number);
+          const skillIdsArray = this.obj.userSkills?.split(',').map(Number);
           this.employeeForm.patchValue
             ({
               id: this.obj.id,
@@ -177,7 +171,7 @@ debugger
     this.isValid = this.employeeForm.invalid;
     const obj = this.employeeForm.value;
     debugger;
-    if (this.selectedFile != null) {
+    if (this.selectedFile != null ) {
       const formData = new FormData();
       formData.append('file', this.selectedFile, this.selectedFile.name);
       this.http.post('https://localhost:7071/File/Upload', formData).subscribe((res: any) => {
@@ -187,7 +181,9 @@ debugger
         }
       });
     } else {
-      obj.avatarUrl = null;
+      
+        // Preserve the existing avatar URL if it exists
+        obj.avatarUrl = this.url.replace('https://localhost:7071/', '').replace(/\//g, '\\'); 
       this.addOrAlterUser(obj)
     }
   }
@@ -195,8 +191,12 @@ debugger
     if (obj.id != null) {
       this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
         (res: any) => {
-          this.GetAll()
+          debugger
+        console.log(obj)
           this.toastr.success('Updated Successfully', 'Success');
+          debugger
+          this.GetAll()
+          console.log(this.GetAll.toString())
         },
         (error) => {
           console.error('Update request failed:', error);
@@ -206,8 +206,8 @@ debugger
     } else {
       debugger
       this.http.post('https://localhost:7071/User/Add', obj).subscribe((res: any) => {
-        this.GetAll()
         this.toastr.success('Added Successfully', 'Success');
+        this.GetAll()
       },
         (error) => {
           console.error('Adding request failed:', error);
@@ -215,7 +215,7 @@ debugger
         }
       );
     }
-
+   window.location.reload()
   }
 
 
@@ -246,7 +246,7 @@ debugger
 
   GetAll() {
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
-      //debugger
+      debugger
       this.userArray = res
 
     })
@@ -262,10 +262,9 @@ debugger
   }
   GetSkills() {
     this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
-     // debugger
+     debugger
       console.log(res)
       this.skills = res
-
     })
   }
   GetWorkingShifts() {
@@ -276,6 +275,7 @@ debugger
 
     })
   }
+  
 
   clickEvent(event: MouseEvent) {
     this.hide = !this.hide;
