@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, EventEmitter, Input, NgModule, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -18,6 +18,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { ExportService } from '../../Services/export.service';
+import { AccountService } from '../../Services/Account/account.service';
 
 
 @Component({
@@ -39,9 +40,10 @@ export class EmployeeComponent implements OnInit {
   skills: any[] = [];
   workingShifts: any[] = []
 
+  accountService = inject(AccountService);
 
 
-  constructor(public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router, private exportService: ExportService) {
+  constructor(private route: Router, public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router, private exportService: ExportService) {
   }
 
 
@@ -73,7 +75,7 @@ export class EmployeeComponent implements OnInit {
         const departmentnm = this.department.find(dp => dp.id === user.departmentId);
         debugger
         const modified = {
-          
+
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -85,7 +87,7 @@ export class EmployeeComponent implements OnInit {
           shiftIds: user.userWorkingShifts,
           userSkillNames: user.userSkillNames,
           userWorkingShiftNames: user.userWorkingShiftNames,
-         avatarUrl: user.avatarUrl,
+          avatarUrl: user.avatarUrl,
           isActive: user.isActive,
           departmentName: departmentnm ? departmentnm.name : 'unkown'
         }
@@ -105,7 +107,12 @@ export class EmployeeComponent implements OnInit {
     return fullImageUrl;
   }
 
-
+  logout(event: Event) {
+    debugger;
+    event.preventDefault();
+    this.accountService.logout();
+    this.route.navigate(['sign-in']);
+  }
 
   onDelete(userId: number) {
     debugger
@@ -137,15 +144,17 @@ export class EmployeeComponent implements OnInit {
   onUpdate(userId: any) {
 
   }
+
   GetDepartment() {
     //debugger
     this.http.get("https://localhost:7071/Department/GetDepartmentList").subscribe((res: any) => {
-    //  debugger
+      //  debugger
       console.log(res)
       this.department = res
       this.GetAll()
     })
   }
+
   GetSkills() {
     this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
       //debugger
