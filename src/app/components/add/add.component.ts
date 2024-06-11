@@ -12,7 +12,7 @@ import { Component, EventEmitter, Inject, Input, Output, ViewChild, inject, inpu
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
-import { ToastrService } from 'ngx-toastr';
+import { IndividualConfig, ToastrService } from 'ngx-toastr';
 import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 
 @Component({
@@ -51,11 +51,13 @@ export class AddComponent {
   obj: any;
   http = inject(HttpClient);
   allSelected = false;
+  updatedSkills: any[]=[]
 
   ngOnInit() {
     this.GetDepartment()
     this.GetAll()
     this.GetWorkingShifts()
+    this.GetSkills()
     if (this.data && this.data.userId) {
       this.LoadUser(this.data.userId)
     }
@@ -114,9 +116,10 @@ export class AddComponent {
         console.log(add)
         if (add) {
           debugger
-
+         
           const shiftIdsArray = this.obj.userWorkingShifts?.split(',').map(Number);
           const skillIdsArray = this.obj.userSkills?.split(',').map(Number);
+         
           this.employeeForm.patchValue
             ({
               id: this.obj.id,
@@ -131,7 +134,8 @@ export class AddComponent {
               isActive: this.obj.isActive,
               avatarUrl: this.obj.avatarUrl,
             })
-          this.url = this.imageShow(this.obj.avatarUrl);
+            //this.skills = skillIdsArray
+                    this.url = this.imageShow(this.obj.avatarUrl);
           console.log(this.employeeForm.value)
         }
       })
@@ -204,16 +208,16 @@ export class AddComponent {
       this.addOrAlterUser(obj)
     }
   }
+  
   addOrAlterUser(obj: any) {
+    debugger
     if (obj.id != null) {
       this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
         (res: any) => {
           debugger
           console.log(obj)
-          this.toastr.success('Updated Successfully', 'Success');
-          debugger
-          this.GetAll()
-          console.log(this.GetAll.toString())
+          this.showToastrAndReload('Updated Successfully', 'Success');
+         
         },
         (error) => {
           console.error('Update request failed:', error);
@@ -223,8 +227,8 @@ export class AddComponent {
     } else {
       debugger
       this.http.post('https://localhost:7071/User/Add', obj).subscribe((res: any) => {
-        this.toastr.success('Added Successfully', 'Success');
-        this.GetAll()
+        debugger
+        this.showToastrAndReload('Added Successfully', 'Success');
       },
         (error) => {
           console.error('Adding request failed:', error);
@@ -232,10 +236,18 @@ export class AddComponent {
         }
       );
     }
-    window.location.reload()
+    this.GetAll()
   }
 
-
+  showToastrAndReload(message: string, title: string) {
+    const toastrConfig: Partial<IndividualConfig> = {
+      timeOut: 1000 // Timeout for Toastr
+    };
+  
+    // Show the Toastr notification and subscribe to the onHidden event
+    const toastrRef = this.toastr.success(message, title, toastrConfig);
+    toastrRef.onHidden.subscribe(() => window.location.reload()); // Reload window after Toastr is hidden
+  }
 
 
   onDelete(userId: number) {
@@ -273,8 +285,19 @@ export class AddComponent {
     })
   }
   GetSkillByDepartmentId(deptId: number) {
+    debugger
     this.http.get(`https://localhost:7071/Skills/GetSkillByDepartmentId/${deptId}`).subscribe((res: any) => {
+      debugger
       this.skills = res
+    })
+  }
+  GetSkills() {
+    this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
+     // debugger
+     debugger
+      console.log(res)
+      this.skills = res
+
     })
   }
   GetWorkingShifts() {
@@ -287,4 +310,9 @@ export class AddComponent {
     this.hide = !this.hide;
     event.stopPropagation();
   }
+  
+}
+
+function showToastr() {
+  throw new Error('Function not implemented.');
 }

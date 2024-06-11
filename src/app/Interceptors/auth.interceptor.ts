@@ -19,6 +19,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   getToken(): string | null {
+    debugger
     const platformId = inject(PLATFORM_ID);
     const token = isPlatformBrowser(platformId) ? localStorage.getItem('JWT_TOKEN') : null;
     return token;
