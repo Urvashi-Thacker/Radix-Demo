@@ -14,6 +14,9 @@ import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/r
 import { FileUploadModule } from 'primeng/fileupload';
 import { IndividualConfig, ToastrService } from 'ngx-toastr';
 import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-add',
@@ -52,6 +55,7 @@ export class AddComponent {
   http = inject(HttpClient);
   allSelected = false;
   updatedSkills: any[]=[]
+ 
 
   ngOnInit() {
     this.GetDepartment()
@@ -310,9 +314,7 @@ export class AddComponent {
     this.hide = !this.hide;
     event.stopPropagation();
   }
-  
+
 }
 
-function showToastr() {
-  throw new Error('Function not implemented.');
-}
+

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, EventEmitter, Input, NgModule, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, OnInit, ViewChild, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -15,10 +15,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { AddComponent } from '../add/add.component';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { ExportService } from '../../Services/export.service';
 import { AccountService } from '../../Services/Account/account.service';
+import { MatSort } from '@angular/material/sort';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -39,7 +41,13 @@ export class EmployeeComponent implements OnInit {
   users: any[] = []
   skills: any[] = [];
   workingShifts: any[] = []
-
+  dataSource!: MatTableDataSource<any> 
+  currentPage: number = 0;
+  pageSize: number = 10;
+  totalItems!: number;
+  data: any[]=[];
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
   accountService = inject(AccountService);
 
 
@@ -49,10 +57,13 @@ export class EmployeeComponent implements OnInit {
 
   ngOnInit() {
 
-    this.GetAll()
+   this.GetAll()
     this.GetDepartment()
     this.GetSkills()
     this.GetWorkingShifts()
+    this.dataSource = new MatTableDataSource<any>();
+    this.dataSource.paginator = this.paginator; // Bind paginator to MatTableDataSource
+    this.fetchData();
   }
 
   openDialog(event: Event) {
@@ -188,5 +199,81 @@ export class EmployeeComponent implements OnInit {
   exportToExcel() {
     debugger
     this.exportService.exportToExcel(this.userArray, 'Employee.xlsx')
+ 
+  }
+  fetchUsers(searchTerm: string, sortColumn: string, sortDirection: string, page: number) {
+    debugger
+  
+    const apiUrl = `https://localhost:7071/User/GetUsersForFSP?page=${page}&limit=5&searchTerm=${searchTerm}&sortColumn=${sortColumn}&sortDirection=${sortDirection}`;
+
+    this.http.get<any>(apiUrl).subscribe(data => {
+      // Assuming the API response contains a 'users' property
+      this.dataSource = new MatTableDataSource(data.users);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
+  }
+  getPaginatedData(page: number, pageSize: number): Observable<any> {
+    return this.http.get<any>(`https://localhost:7071/User/GetUsersForFSP?page=${page}&limit=${pageSize}`);
+  }
+  fetchData(): void {
+    debugger;
+    this.getPaginatedData(this.currentPage, this.pageSize).subscribe(response => {
+      debugger;
+ 
+      this.dataSource.data = response;
+  
+   
+      this.totalItems = response.length;
+  
+ 
+      this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
+      
+        const usersFromAPI = res;
+  
+        
+        const modifiedUsers = usersFromAPI.map((user: { departmentId: any; id: any; firstName: any; lastName: any; gender: any; dob: any; email: any; userSkills: any; userWorkingShifts: any; userSkillNames: any; userWorkingShiftNames: any; avatarUrl: any; isActive: any; }) => {
+          const departmentnm = this.department.find(dp => dp.id === user.departmentId);
+   debugger
+       
+          const modifiedUser = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            gender: user.gender,
+            dob: user.dob,
+            email: user.email,
+            departmentId: user.departmentId,
+            skillIds: user.userSkills,
+            shiftIds: user.userWorkingShifts,
+            userSkillNames: user.userSkillNames,
+            userWorkingShiftNames: user.userWorkingShiftNames,
+            avatarUrl: user.avatarUrl,
+            isActive: user.isActive,
+            departmentName: departmentnm ? departmentnm.name : 'unknown'
+          };
+          return modifiedUser;
+        });
+  debugger
+      
+        const mappedUsers = this.dataSource.data.map(dataSourceUser => {
+          
+          const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
+          if (matchedUser) {
+            return matchedUser;
+          } else {
+            return dataSourceUser;
+          }
+        });
+          this.userArray = mappedUsers;
+      });
+    });
+  }
+  
+  onPageChange(event: any): void {
+    debugger
+    this.currentPage = event.pageIndex + 1; // Note: MatPaginator starts indexing from 0
+    this.pageSize = event.pageSize;
+    this.fetchData();
   }
 }
