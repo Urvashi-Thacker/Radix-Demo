@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Inject, Input, Output, ViewChild, inject, input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,9 +14,7 @@ import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/r
 import { FileUploadModule } from 'primeng/fileupload';
 import { IndividualConfig, ToastrService } from 'ngx-toastr';
 import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+
 
 @Component({
   selector: 'app-add',
@@ -41,7 +39,7 @@ export class AddComponent {
   departmentname: string = ""
   url = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
   hide = true
-  maxDate: string
+ 
   wasFormChanged = false
   isActive: boolean = false
   formIsValid: boolean = false
@@ -69,10 +67,9 @@ export class AddComponent {
 
 
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private toastr: ToastrService, private router: Router) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private toastr: ToastrService, private router: Router ) {
 
-    const today = new Date();
-    this.maxDate = today.toISOString().split('T')[0];
+  
     this.employeeForm = new FormGroup({
       id: new FormControl(),
       firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
@@ -81,7 +78,7 @@ export class AddComponent {
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$')]),
       departmentId: new FormControl(parseInt, [Validators.required]),
-      dob: new FormControl('', [Validators.required, Validators.pattern(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/)]),
+      dob: new FormControl('', [Validators.required]),
       skillIds: new FormControl([], Validators.required),
       shiftIds: new FormControl([], Validators.required,),
       isActive: new FormControl('', Validators.required),
@@ -120,7 +117,8 @@ export class AddComponent {
         console.log(add)
         if (add) {
           debugger
-         
+        
+          debugger
           const shiftIdsArray = this.obj.userWorkingShifts?.split(',').map(Number);
           const skillIdsArray = this.obj.userSkills?.split(',').map(Number);
          
@@ -132,7 +130,7 @@ export class AddComponent {
               gender: this.obj.gender,
               email: this.obj.email,
               password: this.obj.password,
-              dob: this.obj.dob,
+              dob:this.obj.dob,
               departmentId: this.obj.departmentId,
               skillIds: skillIdsArray, shiftIds: shiftIdsArray,
               isActive: this.obj.isActive,
@@ -188,11 +186,15 @@ export class AddComponent {
     this.wasFormChanged = true;
   }
 
-  handleDateChange(event: any) {
-    const selectedDate = event.target.value;
+  handleDateChange(selectedDate: any) {
+    debugger
+  
+    const d = new Date(selectedDate);
+    return (new Date(d).toISOString())
   }
 
   SaveChanges() {
+    debugger
     this.isValid = this.employeeForm.invalid;
     const obj = this.employeeForm.value;
     debugger;
@@ -215,6 +217,8 @@ export class AddComponent {
   
   addOrAlterUser(obj: any) {
     debugger
+  
+
     if (obj.id != null) {
       this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
         (res: any) => {
@@ -242,7 +246,7 @@ export class AddComponent {
     }
     this.GetAll()
   }
-
+  
   showToastrAndReload(message: string, title: string) {
     const toastrConfig: Partial<IndividualConfig> = {
       timeOut: 1000 // Timeout for Toastr
@@ -314,7 +318,6 @@ export class AddComponent {
     this.hide = !this.hide;
     event.stopPropagation();
   }
-
 }
 
 

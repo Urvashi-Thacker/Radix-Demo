@@ -106,8 +106,13 @@
       <div class="col-sm-8 mb-4 mt-3">
         <div class="form-group">
 
-          <input type="datetime-local" class="form-control date-picker" id="myDate" (change)="handleDateChange($event)"
-            formControlName="dob">
+          <mat-form-field>
+            <mat-label>Choose a date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="dob">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
           @if(employeeForm.controls['dob'].invalid && (employeeForm.controls['dob'].touched ||
           employeeForm.controls['dob'].dirty))
           {

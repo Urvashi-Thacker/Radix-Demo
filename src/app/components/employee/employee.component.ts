@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, EventEmitter, Input, NgModule, OnInit, ViewChild, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -49,6 +49,9 @@ export class EmployeeComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   accountService = inject(AccountService);
+searchTerm: string="";
+  totalPages: any;
+ 
 
 
   constructor(private route: Router, public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router, private exportService: ExportService) {
@@ -69,9 +72,9 @@ export class EmployeeComponent implements OnInit {
   openDialog(event: Event) {
     debugger
     event.preventDefault();
-
+  
     const dialogRef = this.dialog.open(AddComponent, {
-
+      
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -276,4 +279,50 @@ export class EmployeeComponent implements OnInit {
     this.pageSize = event.pageSize;
     this.fetchData();
   }
+
+  modifyUser(user: any): any {
+    // Modify user data here as per your requirements
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      dob: user.dob,
+      email: user.email,
+      departmentId: user.departmentId,
+      skillIds: user.userSkills,
+      shiftIds: user.userWorkingShifts,
+      userSkillNames: user.userSkillNames,
+      userWorkingShiftNames: user.userWorkingShiftNames,
+      avatarUrl: user.avatarUrl,
+      isActive: user.isActive,
+      departmentName: this.department.find(dp => dp.id === user.departmentId)?.name || 'unknown'
+    };
+  }
+  fetchDataBySearchTerm(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value;
+    const apiUrl = `https://localhost:7071/User/GetUsersForFSP?searchTerm=${searchTerm}`;
+    this.http.get<any[]>(apiUrl).subscribe((response: any[]) => {
+      this.dataSource.data = response.map(user => this.modifyUser(user));
+      this.updateUserArrayAndPagination(response.length);
+    });
+  }
+  
+  updateUserArrayAndPagination(totalItems: number): void {
+    this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
+      const usersFromAPI = res;
+      const modifiedUsers = usersFromAPI.map((user: any) => this.modifyUser(user));
+      this.userArray = this.dataSource.data.map(dataSourceUser => {
+        const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
+        return matchedUser ? matchedUser : dataSourceUser;
+      });
+      // Update pagination
+      debugger
+      this.totalItems = totalItems;
+      this.totalPages = Math.ceil(totalItems / this.pageSize);
+    });
+  }
+  
+  
 }
+
