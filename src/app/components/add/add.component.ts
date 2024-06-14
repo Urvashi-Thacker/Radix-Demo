@@ -53,7 +53,7 @@ export class AddComponent {
   http = inject(HttpClient);
   allSelected = false;
   updatedSkills: any[]=[]
- 
+  selectAll = false;
 
   ngOnInit() {
     this.GetDepartment()
@@ -317,6 +317,30 @@ export class AddComponent {
   clickEvent(event: MouseEvent) {
     this.hide = !this.hide;
     event.stopPropagation();
+  }
+
+
+  toggleSelectAll() {
+    const allSkillIds = this.skills.map(skill => skill.id);
+    if (!this.selectAll) {
+
+      this.employeeForm.get('skillIds')?.patchValue(allSkillIds);
+    } else {
+
+      this.employeeForm.get('skillIds')?.patchValue([]);
+    }
+    this.selectAll = !this.selectAll; 
+  }
+  toggleSelectAllForShift() {
+    const allShiftIds = this.workingShifts.map(shift => shift.id);
+    if (!this.selectAll) {
+
+      this.employeeForm.get('shiftIds')?.patchValue(allShiftIds);
+    } else {
+
+      this.employeeForm.get('shiftIds')?.patchValue([]);
+    }
+    this.selectAll = !this.selectAll; 
   }
 }
 

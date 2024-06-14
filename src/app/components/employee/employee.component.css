@@ -187,3 +187,22 @@
 .mat-card-title{
   color: blue;
 }
+.header-content {
+  display: flex;
+  align-items: center;
+  cursor: pointer; /* Optional: Add pointer cursor for better UX */
+}
+
+.header-text {
+  margin-right: 4px; /* Adjust as needed to create spacing between text and icons */
+}
+
+.sort-icon {
+  font-size: 5px; /* Adjust icon size as needed */
+  color: #aaa; /* Adjust icon color as needed */
+}
+
+.sort-icon:hover {
+  color: #333; /* Adjust icon color on hover as needed */
+}
+

@@ -142,16 +142,16 @@
       <mat-form-field>
         <mat-label>Skills</mat-label>
         <mat-select formControlName="skillIds" multiple>
-          <mat-option>Select All</mat-option>
+          <mat-option (click)="toggleSelectAll()">Select All </mat-option>
           <mat-option *ngFor="let item of skills" [value]="item.id" required>{{ item.skill }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> 
     </div>
     <div class="form-group row">
       <mat-form-field>
         <mat-label>Select preferred working shift</mat-label>
         <mat-select formControlName="shiftIds" multiple>
-          <mat-option (click)="toggleAllSelection()">Select All</mat-option>
+          <mat-option (click)="toggleSelectAllForShift()">Select All</mat-option>
           <mat-option *ngFor="let item of workingShifts" [value]="item.id" required>{{ item.startTime
             }}-{{item.endTime}}</mat-option>
         </mat-select>

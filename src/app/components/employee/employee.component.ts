@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, EventEmitter, Input, NgModule, OnInit, ViewChild, inject } from '@angular/core';
+import { HttpClient, HttpClientModule, HttpParams } from '@angular/common/http';
+import { AfterViewInit, Component, EventEmitter, Input, NgModule, OnInit, ViewChild, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -14,26 +14,26 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { AddComponent } from '../add/add.component';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { ExportService } from '../../Services/export.service';
 import { AccountService } from '../../Services/Account/account.service';
 import { MatSort } from '@angular/material/sort';
-import { Observable } from 'rxjs';
-
+import { Observable, forkJoin } from 'rxjs';
+import { MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [MatCardModule, MatTableModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatRadioModule, MatIconModule, MatDatepickerModule,
+  imports: [MatSortModule,MatCardModule, MatTableModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatRadioModule, MatIconModule, MatDatepickerModule,
     MatSelectModule, RouterLink, RouterLinkActive, ReactiveFormsModule, HttpClientModule, CommonModule, FileUploadModule],
   templateUrl: './employee.component.html',
 
   styleUrl: './employee.component.css'
 
 })
-export class EmployeeComponent implements OnInit {
+export class EmployeeComponent implements OnInit, AfterViewInit {
   departmentData: { [key: string]: string } = {};
   displayedColumns: string[] = ['firstName', 'lastName', 'gender', 'dob', 'email', 'departmentId', 'skill', 'shift', 'image', 'activityStatus', 'action'];
   userArray: any[] = [];
@@ -46,19 +46,31 @@ export class EmployeeComponent implements OnInit {
   pageSize: number = 10;
   totalItems!: number;
   data: any[]=[];
+  sortColumn!: string;
+  sortDirection!:string;
+
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+
   accountService = inject(AccountService);
 searchTerm: string="";
   totalPages: any;
+
  
 
 
   constructor(private route: Router, public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router, private exportService: ExportService) {
   }
-
-
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+ 
   ngOnInit() {
+    this.sortColumn = 'firstName'; // Default sort column
+    this.sortDirection = 'asc'; // Default sort direction
+    this.SortData();
 
    this.GetAll()
     this.GetDepartment()
@@ -67,6 +79,7 @@ searchTerm: string="";
     this.dataSource = new MatTableDataSource<any>();
     this.dataSource.paginator = this.paginator; // Bind paginator to MatTableDataSource
     this.fetchData();
+ 
   }
 
   openDialog(event: Event) {
@@ -84,8 +97,12 @@ searchTerm: string="";
   GetAll() {
     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
       debugger
+      const obj = res
       this.users = res
+     
+      
       this.userArray = this.users.map(user => {
+       
         const departmentnm = this.department.find(dp => dp.id === user.departmentId);
         debugger
         const modified = {
@@ -106,9 +123,9 @@ searchTerm: string="";
           departmentName: departmentnm ? departmentnm.name : 'unkown'
         }
         return modified
-
+       
       })
-
+ 
     })
   }
 
@@ -213,7 +230,7 @@ searchTerm: string="";
       // Assuming the API response contains a 'users' property
       this.dataSource = new MatTableDataSource(data.users);
       this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+     
     });
   }
   getPaginatedData(page: number, pageSize: number): Observable<any> {
@@ -222,6 +239,118 @@ searchTerm: string="";
   fetchData(): void {
     debugger;
     this.getPaginatedData(this.currentPage, this.pageSize).subscribe(response => {
+      debugger;
+ 
+      this.dataSource.data = response;
+  
+   
+      this.totalItems = response.length;
+      this.paginator.length = this.totalItems;
+ 
+      this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
+      
+        const usersFromAPI = res;
+  
+        
+        const modifiedUsers = usersFromAPI.map((user: { departmentId: any; id: any; firstName: any; lastName: any; gender: any; dob: any; email: any; userSkills: any; userWorkingShifts: any; userSkillNames: any; userWorkingShiftNames: any; avatarUrl: any; isActive: any; }) => {
+          const departmentnm = this.department.find(dp => dp.id === user.departmentId);
+   debugger
+       
+          const modifiedUser = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            gender: user.gender,
+            dob: user.dob,
+            email: user.email,
+            departmentId: user.departmentId,
+            skillIds: user.userSkills,
+            shiftIds: user.userWorkingShifts,
+            userSkillNames: user.userSkillNames,
+            userWorkingShiftNames: user.userWorkingShiftNames,
+            avatarUrl: user.avatarUrl,
+            isActive: user.isActive,
+            departmentName: departmentnm ? departmentnm.name : 'unknown'
+          };
+          return modifiedUser;
+        });
+  debugger
+      
+        const mappedUsers = this.dataSource.data.map(dataSourceUser => {
+          
+          const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
+          if (matchedUser) {
+            return matchedUser;
+          } else {
+            return dataSourceUser;
+          }
+        });
+          this.userArray = mappedUsers;
+      });
+    });
+  }
+  
+  onPageChange(event: PageEvent): void {
+    debugger
+    this.currentPage = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.paginator.nextPage()
+    this.fetchData();
+
+}
+
+  modifyUser(user: any): any {
+    // Modify user data here as per your requirements
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      dob: user.dob,
+      email: user.email,
+      departmentId: user.departmentId,
+      skillIds: user.userSkills,
+      shiftIds: user.userWorkingShifts,
+      userSkillNames: user.userSkillNames,
+      userWorkingShiftNames: user.userWorkingShiftNames,
+      avatarUrl: user.avatarUrl,
+      isActive: user.isActive,
+      departmentName: this.department.find(dp => dp.id === user.departmentId)?.name || 'unknown'
+    };
+  }
+  fetchDataBySearchTerm(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value;
+    const apiUrl = `https://localhost:7071/User/GetUsersForFSP?searchTerm=${searchTerm}`;
+    this.http.get<any[]>(apiUrl).subscribe((response: any[]) => {
+      this.dataSource.data = response.map(user => this.modifyUser(user));
+      this.updateUserArrayAndPagination(response.length);
+    });
+  }
+  
+  updateUserArrayAndPagination(totalItems: number): void {
+    this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
+      const usersFromAPI = res;
+      const modifiedUsers = usersFromAPI.map((user: any) => this.modifyUser(user));
+      this.userArray = this.dataSource.data.map(dataSourceUser => {
+        const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
+        return matchedUser ? matchedUser : dataSourceUser;
+      });
+      // Update pagination
+      debugger
+      this.totalItems = totalItems;
+      this.totalPages = Math.ceil(totalItems / this.pageSize);
+    });
+  }
+  
+  getData(sortColumn: string, sortDirection: string): Observable<any[]> {
+    let params = new HttpParams();
+    params = params.append('sortColumn', sortColumn);
+    params = params.append('sortDirection', sortDirection);
+    return this.http.get<any[]>('https://localhost:7071/User/GetUsersForFSP', { params: params });
+  }
+  SortData(): void {
+    debugger;
+    this.getData(this.sortColumn, this.sortDirection).subscribe(response => {
       debugger;
  
       this.dataSource.data = response;
@@ -273,56 +402,40 @@ searchTerm: string="";
     });
   }
   
-  onPageChange(event: any): void {
+  
+  applySorting(column: string) {
     debugger
-    this.currentPage = event.pageIndex + 1; // Note: MatPaginator starts indexing from 0
-    this.pageSize = event.pageSize;
-    this.fetchData();
-  }
-
-  modifyUser(user: any): any {
-    // Modify user data here as per your requirements
-    return {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      gender: user.gender,
-      dob: user.dob,
-      email: user.email,
-      departmentId: user.departmentId,
-      skillIds: user.userSkills,
-      shiftIds: user.userWorkingShifts,
-      userSkillNames: user.userSkillNames,
-      userWorkingShiftNames: user.userWorkingShiftNames,
-      avatarUrl: user.avatarUrl,
-      isActive: user.isActive,
-      departmentName: this.department.find(dp => dp.id === user.departmentId)?.name || 'unknown'
-    };
-  }
-  fetchDataBySearchTerm(event: Event): void {
-    const searchTerm = (event.target as HTMLInputElement).value;
-    const apiUrl = `https://localhost:7071/User/GetUsersForFSP?searchTerm=${searchTerm}`;
-    this.http.get<any[]>(apiUrl).subscribe((response: any[]) => {
-      this.dataSource.data = response.map(user => this.modifyUser(user));
-      this.updateUserArrayAndPagination(response.length);
+    this.SortData()
+    if (this.sortColumn === column) {
+      // If the same column is clicked, toggle the sort direction
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // If a new column is clicked, set the sort column and default to ascending direction
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  
+    // Sort the userArray based on the selected column and direction
+    this.userArray.sort((a, b) => {
+      const valA = a[column];
+      const valB = b[column];
+      if (valA < valB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      } else if (valA > valB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      } else {
+        return 0;
+      }
     });
+  debugger
+    // Update dataSource
+    this.dataSource = new MatTableDataSource(this.userArray);
   }
   
-  updateUserArrayAndPagination(totalItems: number): void {
-    this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
-      const usersFromAPI = res;
-      const modifiedUsers = usersFromAPI.map((user: any) => this.modifyUser(user));
-      this.userArray = this.dataSource.data.map(dataSourceUser => {
-        const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
-        return matchedUser ? matchedUser : dataSourceUser;
-      });
-      // Update pagination
-      debugger
-      this.totalItems = totalItems;
-      this.totalPages = Math.ceil(totalItems / this.pageSize);
-    });
-  }
+        
   
   
 }
+
+  
 
