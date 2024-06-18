@@ -119,6 +119,7 @@ export class AddComponent {
           debugger
         
           debugger
+          const dob = new Date(this.obj.dob).toISOString()
           const shiftIdsArray = this.obj.userWorkingShifts?.split(',').map(Number);
           const skillIdsArray = this.obj.userSkills?.split(',').map(Number);
          
@@ -130,7 +131,7 @@ export class AddComponent {
               gender: this.obj.gender,
               email: this.obj.email,
               password: this.obj.password,
-              dob:this.obj.dob,
+              dob:dob,
               departmentId: this.obj.departmentId,
               skillIds: skillIdsArray, shiftIds: shiftIdsArray,
               isActive: this.obj.isActive,

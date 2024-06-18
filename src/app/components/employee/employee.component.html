@@ -34,106 +34,100 @@
   </div> 
    -->
 
-  <mat-card-title
-    style="display: block; text-align: center; font-size:35px; font-weight: 900px; font-family:'Times New Roman', Times, serif ; margin-bottom: 30px;">Employee
-    Dashboard</mat-card-title>
-    <mat-form-field>
-      <input matInput  type="text" (keyup)="fetchDataBySearchTerm($event)" placeholder="ex. name, email , dept.">
-    
-    </mat-form-field>
+   <mat-card-title style="display: block; text-align: center; font-size: 35px; font-weight: 900; font-family: 'Times New Roman', Times, serif; margin-bottom: 30px;">
+    Employee Dashboard
+  </mat-card-title>
+  
+  <mat-form-field>
+    <input matInput type="text" (keyup)="fetchDataBySearchTerm($event)" placeholder="Ex. name,email">
+  </mat-form-field>
+  
   <div class="export mb-3">
     <button mat-raised-button color="primary" (click)="exportToCSV()">Export to CSV</button>
-    <button mat-raised-button color="primary" (click)="exportToExcel()" style="margin-left: 30px;">Export to
-      Excel</button>
+    <button mat-raised-button color="primary" (click)="exportToExcel()" style="margin-left: 30px;">Export to Excel</button>
   </div>
-
-
+  
   <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="userArray" matSort class="mat-elevation-z8"  >
-
-      <!-- Position Column -->
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  
+      <!-- Columns definition -->
       <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header (click)="applySorting('firstName')">
-          Name
-        </th>
-        <td mat-cell *matCellDef="let element">{{ element.firstName }}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header (click)="applySorting('firstName')"> Name </th>
+        <td mat-cell *matCellDef="let element"> {{ element.firstName }} </td>
       </ng-container>
-
-      <!-- Name Column -->
+  
       <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header (click)="applySorting('lastName')" > Surname</th>
-        <td mat-cell *matCellDef="let elemnent "> {{elemnent.lastName}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header (click)="applySorting('lastName')"> Surname </th>
+        <td mat-cell *matCellDef="let element"> {{ element.lastName }} </td>
       </ng-container>
-
-      <!-- Weight Column -->
+  
       <ng-container matColumnDef="gender">
-        <th mat-header-cell *matHeaderCellDef > Gender </th>
-        <td mat-cell *matCellDef="let elemnent"> {{getGenderLabel(elemnent.gender)}} </td>
+        <th mat-header-cell *matHeaderCellDef> Gender </th>
+        <td mat-cell *matCellDef="let element"> {{ getGenderLabel(element.gender) }} </td>
       </ng-container>
-
-      <!-- Symbol Column -->
+  
       <ng-container matColumnDef="dob">
         <th mat-header-cell *matHeaderCellDef> Date Of Birth </th>
-        <td mat-cell *matCellDef="let elemnent"> {{elemnent.dob | date}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.dob | date }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef> Email Address </th>
-        <td mat-cell *matCellDef="let elemnent "> {{elemnent.email}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.email }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="departmentId">
         <th mat-header-cell *matHeaderCellDef> Department </th>
-        <td mat-cell *matCellDef="let elemnent "> {{ elemnent.departmentName}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.departmentName }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="skill">
         <th mat-header-cell *matHeaderCellDef> Skills </th>
-        <td mat-cell *matCellDef="let elemnent "> {{(elemnent.userSkillNames == null)? 'N/A': elemnent.userSkillNames}}
-        </td>
+        <td mat-cell *matCellDef="let element"> {{ element.userSkillNames || 'N/A' }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="shift">
         <th mat-header-cell *matHeaderCellDef> Shift Hours </th>
-        <td mat-cell *matCellDef="let elemnent "> {{(elemnent.userWorkingShiftNames == null) ? 'N/A' :
-          elemnent.userWorkingShiftNames}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.userWorkingShiftNames || 'N/A' }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="image">
         <th mat-header-cell *matHeaderCellDef> Profile Image </th>
-        <td mat-cell *matCellDef="let elemnent">
-
-          <img [src]="imageShow(elemnent.avatarUrl)" (error)="errorImageHandler($event)" height="100px" width="100px"
-            class="p-3">
-
+        <td mat-cell *matCellDef="let element">
+          <img [src]="imageShow(element.avatarUrl)" (error)="errorImageHandler($event)" height="100px" width="100px" class="p-3">
         </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="activityStatus">
         <th mat-header-cell *matHeaderCellDef> User Status </th>
-        <td mat-cell *matCellDef="let elemnent"> {{userActive(elemnent.isActive)}} </td>
+        <td mat-cell *matCellDef="let element"> {{ userActive(element.isActive) }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef> Action </th>
-        <td mat-cell *matCellDef="let elemnent">
-          <button mat-icon-button matTooltip="Click to Edit" class="iconbutton" color="primary"
-            (click)="updateUser(elemnent.id)"><mat-icon>edit</mat-icon></button>
-          <button mat-icon-button matTooltip="Click to Delete" class="iconbutton" color="warn"
-            (click)="onDelete(elemnent.id)"> <mat-icon>delete</mat-icon></button>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button matTooltip="Click to Edit" class="iconbutton" color="primary" (click)="updateUser(element.id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Click to Delete" class="iconbutton" color="warn" (click)="onDelete(element.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </td>
       </ng-container>
+  
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-
-    
-    <mat-paginator [length]="totalItems" [pageSize]="pageSize" showFirstLastButtons [pageSizeOptions]="[5, 10, 50, 100]"
-               (page)="onPageChange($event)">
+    <mat-card-footer>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
+      showFirstLastButtons
+     >
 </mat-paginator>
+    </mat-card-footer>
   </div>
- 
-
+  
+  </div>
+  
   <!-- <div class="container" >
     <p style="display: block; text-align: center; font-size:35px; font-weight: 800px; font-family:'Times New Roman', Times, serif ;">EMPLOYEE DASHBOARD</p>
  </div>

@@ -57,6 +57,7 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
   accountService = inject(AccountService);
 searchTerm: string="";
   totalPages: any;
+  firstIndex: any;
 
  
 
@@ -65,23 +66,20 @@ searchTerm: string="";
   }
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+   
   }
  
   ngOnInit() {
-    this.sortColumn = 'firstName'; // Default sort column
-    this.sortDirection = 'asc'; // Default sort direction
-    this.SortData();
-
-   this.GetAll()
+    this.GetAll()
     this.GetDepartment()
     this.GetSkills()
     this.GetWorkingShifts()
-    this.dataSource = new MatTableDataSource<any>();
-    this.dataSource.paginator = this.paginator; // Bind paginator to MatTableDataSource
-    this.fetchData();
- 
-  }
-
+    this.sortColumn = 'firstName'; // Default sort column
+    this.sortDirection = 'asc'; // Default sort direction
+    
+    
+    }
+    
   openDialog(event: Event) {
     debugger
     event.preventDefault();
@@ -99,14 +97,14 @@ searchTerm: string="";
       debugger
       const obj = res
       this.users = res
-     
+      
       
       this.userArray = this.users.map(user => {
-       
+        
         const departmentnm = this.department.find(dp => dp.id === user.departmentId);
         debugger
         const modified = {
-
+          
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -121,12 +119,13 @@ searchTerm: string="";
           avatarUrl: user.avatarUrl,
           isActive: user.isActive,
           departmentName: departmentnm ? departmentnm.name : 'unkown'
-        }
-        return modified
-       
-      })
- 
-    })
+          }
+          return modified
+          
+          })
+          this.dataSource = new MatTableDataSource<any[]>(this.userArray)
+          this.dataSource.paginator = this.paginator
+          })
   }
 
 
@@ -221,103 +220,9 @@ searchTerm: string="";
     this.exportService.exportToExcel(this.userArray, 'Employee.xlsx')
  
   }
-  fetchUsers(searchTerm: string, sortColumn: string, sortDirection: string, page: number) {
-    debugger
-  
-    const apiUrl = `https://localhost:7071/User/GetUsersForFSP?page=${page}&limit=5&searchTerm=${searchTerm}&sortColumn=${sortColumn}&sortDirection=${sortDirection}`;
 
-    this.http.get<any>(apiUrl).subscribe(data => {
-      // Assuming the API response contains a 'users' property
-      this.dataSource = new MatTableDataSource(data.users);
-      this.dataSource.paginator = this.paginator;
-     
-    });
-  }
-  getPaginatedData(page: number, pageSize: number): Observable<any> {
-    return this.http.get<any>(`https://localhost:7071/User/GetUsersForFSP?page=${page}&limit=${pageSize}`);
-  }
-  fetchData(): void {
-    debugger;
-    this.getPaginatedData(this.currentPage, this.pageSize).subscribe(response => {
-      debugger;
- 
-      this.dataSource.data = response;
-  
-   
-      this.totalItems = response.length;
-      this.paginator.length = this.totalItems;
- 
-      this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
-      
-        const usersFromAPI = res;
-  
-        
-        const modifiedUsers = usersFromAPI.map((user: { departmentId: any; id: any; firstName: any; lastName: any; gender: any; dob: any; email: any; userSkills: any; userWorkingShifts: any; userSkillNames: any; userWorkingShiftNames: any; avatarUrl: any; isActive: any; }) => {
-          const departmentnm = this.department.find(dp => dp.id === user.departmentId);
-   debugger
-       
-          const modifiedUser = {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            gender: user.gender,
-            dob: user.dob,
-            email: user.email,
-            departmentId: user.departmentId,
-            skillIds: user.userSkills,
-            shiftIds: user.userWorkingShifts,
-            userSkillNames: user.userSkillNames,
-            userWorkingShiftNames: user.userWorkingShiftNames,
-            avatarUrl: user.avatarUrl,
-            isActive: user.isActive,
-            departmentName: departmentnm ? departmentnm.name : 'unknown'
-          };
-          return modifiedUser;
-        });
-  debugger
-      
-        const mappedUsers = this.dataSource.data.map(dataSourceUser => {
-          
-          const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
-          if (matchedUser) {
-            return matchedUser;
-          } else {
-            return dataSourceUser;
-          }
-        });
-          this.userArray = mappedUsers;
-      });
-    });
-  }
-  
-  onPageChange(event: PageEvent): void {
-    debugger
-    this.currentPage = event.pageIndex + 1;
-    this.pageSize = event.pageSize;
-    this.paginator.nextPage()
-    this.fetchData();
 
-}
 
-  modifyUser(user: any): any {
-    // Modify user data here as per your requirements
-    return {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      gender: user.gender,
-      dob: user.dob,
-      email: user.email,
-      departmentId: user.departmentId,
-      skillIds: user.userSkills,
-      shiftIds: user.userWorkingShifts,
-      userSkillNames: user.userSkillNames,
-      userWorkingShiftNames: user.userWorkingShiftNames,
-      avatarUrl: user.avatarUrl,
-      isActive: user.isActive,
-      departmentName: this.department.find(dp => dp.id === user.departmentId)?.name || 'unknown'
-    };
-  }
   fetchDataBySearchTerm(event: Event): void {
     const searchTerm = (event.target as HTMLInputElement).value;
     const apiUrl = `https://localhost:7071/User/GetUsersForFSP?searchTerm=${searchTerm}`;
@@ -342,100 +247,128 @@ searchTerm: string="";
     });
   }
   
-  getData(sortColumn: string, sortDirection: string): Observable<any[]> {
-    let params = new HttpParams();
-    params = params.append('sortColumn', sortColumn);
-    params = params.append('sortDirection', sortDirection);
-    return this.http.get<any[]>('https://localhost:7071/User/GetUsersForFSP', { params: params });
-  }
-  SortData(): void {
-    debugger;
-    this.getData(this.sortColumn, this.sortDirection).subscribe(response => {
-      debugger;
- 
-      this.dataSource.data = response;
-  
-   
-      this.totalItems = response.length;
-  
- 
-      this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
-      
-        const usersFromAPI = res;
-  
+
         
-        const modifiedUsers = usersFromAPI.map((user: { departmentId: any; id: any; firstName: any; lastName: any; gender: any; dob: any; email: any; userSkills: any; userWorkingShifts: any; userSkillNames: any; userWorkingShiftNames: any; avatarUrl: any; isActive: any; }) => {
-          const departmentnm = this.department.find(dp => dp.id === user.departmentId);
-   debugger
-       
-          const modifiedUser = {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            gender: user.gender,
-            dob: user.dob,
-            email: user.email,
-            departmentId: user.departmentId,
-            skillIds: user.userSkills,
-            shiftIds: user.userWorkingShifts,
-            userSkillNames: user.userSkillNames,
-            userWorkingShiftNames: user.userWorkingShiftNames,
-            avatarUrl: user.avatarUrl,
-            isActive: user.isActive,
-            departmentName: departmentnm ? departmentnm.name : 'unknown'
-          };
-          return modifiedUser;
-        });
-  debugger
-      
-        const mappedUsers = this.dataSource.data.map(dataSourceUser => {
-          
-          const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
-          if (matchedUser) {
-            return matchedUser;
-          } else {
-            return dataSourceUser;
-          }
-        });
-          this.userArray = mappedUsers;
-      });
-    });
-  }
-  
-  
-  applySorting(column: string) {
-    debugger
-    this.SortData()
-    if (this.sortColumn === column) {
-      // If the same column is clicked, toggle the sort direction
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      // If a new column is clicked, set the sort column and default to ascending direction
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-  
-    // Sort the userArray based on the selected column and direction
-    this.userArray.sort((a, b) => {
-      const valA = a[column];
-      const valB = b[column];
-      if (valA < valB) {
-        return this.sortDirection === 'asc' ? -1 : 1;
-      } else if (valA > valB) {
-        return this.sortDirection === 'asc' ? 1 : -1;
-      } else {
-        return 0;
-      }
-    });
-  debugger
-    // Update dataSource
-    this.dataSource = new MatTableDataSource(this.userArray);
-  }
-  
-        
-  
+fetchPaginatedData(page: number, pageSize: number): Observable<any[]> {
+  const apiUrl = `https://localhost:7071/User/GetUsersForFSP?page=${page}&limit=${pageSize}`;
+  return this.http.get<any[]>(apiUrl);
   
 }
 
-  
 
+modifyUser(user: any): any {
+  // Modify user data here as per your requirements
+  return {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    gender: user.gender,
+    dob: user.dob,
+    email: user.email,
+    departmentId: user.departmentId,
+    skillIds: user.userSkills,
+    shiftIds: user.userWorkingShifts,
+    userSkillNames: user.userSkillNames,
+    userWorkingShiftNames: user.userWorkingShiftNames,
+    avatarUrl: user.avatarUrl,
+    isActive: user.isActive,
+    departmentName: this.department.find(dp => dp.id === user.departmentId)?.name || 'unknown'
+  };
+}
+
+
+fetchSortedData(sortColumn: string, sortDirection: string): Observable<any[]> {
+  let params = new HttpParams();
+      params = params.append('sortColumn', sortColumn);
+      params = params.append('sortDirection', sortDirection);
+      return this.http.get<any[]>('https://localhost:7071/User/GetUsersForFSP', { params: params });
+}
+SortData(): void {
+  debugger;
+  this.fetchSortedData(this.sortColumn, this.sortDirection).subscribe(response => {
+    debugger;
+
+    this.dataSource.data = response;
+
+ 
+    this.totalItems = response.length;
+
+
+    this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
+    
+      const usersFromAPI = res;
+
+      
+      const modifiedUsers = usersFromAPI.map((user: { departmentId: any; id: any; firstName: any; lastName: any; gender: any; dob: any; email: any; userSkills: any; userWorkingShifts: any; userSkillNames: any; userWorkingShiftNames: any; avatarUrl: any; isActive: any; }) => {
+        const departmentnm = this.department.find(dp => dp.id === user.departmentId);
+ debugger
+     
+        const modifiedUser = {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          gender: user.gender,
+          dob: user.dob,
+          email: user.email,
+          departmentId: user.departmentId,
+          skillIds: user.userSkills,
+          shiftIds: user.userWorkingShifts,
+          userSkillNames: user.userSkillNames,
+          userWorkingShiftNames: user.userWorkingShiftNames,
+          avatarUrl: user.avatarUrl,
+          isActive: user.isActive,
+          departmentName: departmentnm ? departmentnm.name : 'unknown'
+        };
+        return modifiedUser;
+      });
+debugger
+    
+      const mappedUsers = this.dataSource.data.map(dataSourceUser => {
+        
+        const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
+        if (matchedUser) {
+          return matchedUser;
+        } else {
+          return dataSourceUser;
+        }
+      });
+        this.userArray = mappedUsers;
+    });
+  });
+}
+
+applySorting(column: string) {
+  this.SortData()
+      if (this.sortColumn === column) {
+        // If the same column is clicked, toggle the sort direction
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        // If a new column is clicked, set the sort column and default to ascending direction
+        this.sortColumn = column;
+        this.sortDirection = 'asc';
+      }
+    
+      // Sort the userArray based on the selected column and direction
+      this.userArray.sort((a, b) => {
+        const valA = a[column];
+        const valB = b[column];
+        if (valA < valB) {
+          return this.sortDirection === 'asc' ? -1 : 1;
+        } else if (valA > valB) {
+          return this.sortDirection === 'asc' ? 1 : -1;
+        } else {
+          return 0;
+        }
+      });
+
+  this.fetchSortedData(this.sortColumn, this.sortDirection).subscribe(response => {
+    this.dataSource.data = response;
+    this.dataSource.sort = this.sort;
+    // this.totalItems = response.length; // Update totalItems if needed
+    // this.paginator.length = this.totalItems;
+  });
+}
+
+}
+
+  
