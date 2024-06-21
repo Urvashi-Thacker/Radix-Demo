@@ -14,6 +14,7 @@ import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/r
 import { FileUploadModule } from 'primeng/fileupload';
 import { IndividualConfig, ToastrService } from 'ngx-toastr';
 import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
+import { debug } from 'node:console';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class AddComponent {
   departmentname: string = ""
   url = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
   hide = true
- 
+ gender : string =''
   wasFormChanged = false
   isActive: boolean = false
   formIsValid: boolean = false
@@ -54,6 +55,7 @@ export class AddComponent {
   allSelected = false;
   updatedSkills: any[]=[]
   selectAll = false;
+  maxDate: string;
 
   ngOnInit() {
     this.GetDepartment()
@@ -69,8 +71,11 @@ export class AddComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private toastr: ToastrService, private router: Router ) {
 
+    const today = new Date();
+    this.maxDate = today.toISOString().split('T')[0];
   
     this.employeeForm = new FormGroup({
+     
       id: new FormControl(),
       firstName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
       lastName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
@@ -109,7 +114,7 @@ export class AddComponent {
 
   LoadUser(id: any) {
     debugger
-    this.toastr.warning('Are you sure you want to Update? Tap to confirm', 'Confirmation').onTap.subscribe(() => {
+    
       debugger
       this.http.get(`https://localhost:7071/User/GetByID/${id}`).subscribe(add => {
         debugger
@@ -142,7 +147,7 @@ export class AddComponent {
           console.log(this.employeeForm.value)
         }
       })
-    })
+
   }
 
   imageShow(imageUrl: string) {
@@ -193,40 +198,95 @@ export class AddComponent {
     const d = new Date(selectedDate);
     return (new Date(d).toISOString())
   }
-
+ 
+  
+  
   SaveChanges() {
-    debugger
+    debugger;
     this.isValid = this.employeeForm.invalid;
     const obj = this.employeeForm.value;
     debugger;
+  
     if (this.selectedFile != null) {
       const formData = new FormData();
       formData.append('file', this.selectedFile, this.selectedFile.name);
       this.http.post('https://localhost:7071/File/Upload', formData).subscribe((res: any) => {
         if (res.isSuccess == true) {
           obj.avatarUrl = res.avatarUrl;
-          this.addOrAlterUser(obj)
+          this.addOrAlterUser(obj);
         }
       });
     } else {
-
-      // Preserve the existing avatar URL if it exists
+      debugger;
       obj.avatarUrl = this.url.replace('https://localhost:7071/', '').replace(/\//g, '\\');
-      this.addOrAlterUser(obj)
+      // Corrected URL with double backslashes
+      const correctUrl = "https:\\\\upload.wikimedia.org\\wikipedia\\commons\\6\\65\\No-Image-Placeholder.svg";
+  
+      // Check if avatarUrl matches the correct URL
+      if (obj.avatarUrl === correctUrl) {
+        this.toastr.warning('Please provide avatar URL', 'Warning');
+        return; // Exit function if avatarUrl matches the placeholder URL
+      }
+      
+      this.addOrAlterUser(obj);
     }
   }
   
-  addOrAlterUser(obj: any) {
-    debugger
   
-
+  addOrAlterUser(obj: any) {
+    const requiredFields = ['avatarUrl','firstName', 'lastName', 'gender', 'email', 'password', 'dob', 'departmentId', 'shiftIds', 'skillIds', 'isActive'];
+  debugger
+    for (const field of requiredFields) {
+      if (field === 'gender') {
+        if (obj.gender === "" ) {
+          debugger
+          this.toastr.warning('Please select gender', 'Warning');
+          return;
+        }
+      } else {
+        if (!obj[field]) {
+          this.toastr.warning(`Please fill in ${field}`, 'Warning');
+          return; 
+        }
+      }
+    }
+  
+    // Ensure avatarUrl is not null or empty string (if required)
+    if (obj.avatarUrl == "null" || obj.avatarUrl ==  "https:\\upload.wikimedia.org\wikipedia\commons\\6\\65\No-Image-Placeholder.svg") {
+      debugger
+      this.toastr.warning('Please provide avatar URL', 'Warning');
+      return; // Exit function if avatarUrl is missing
+    }
+  
+    // Ensure departmentId is selected
+    if (!obj.departmentId) {
+      this.toastr.warning('Please select a department', 'Warning');
+      return; // Exit function if departmentId is missing
+    }
+  
+    // Ensure at least one shiftId is selected
+    if (!obj.shiftIds || obj.shiftIds.length === 0) {
+      this.toastr.warning('Please select at least one shift', 'Warning');
+      return; // Exit function if shiftIds are missing
+    }
+  
+    // Ensure at least one skillId is selected
+    if (!obj.skillIds || obj.skillIds.length === 0) {
+      this.toastr.warning('Please select at least one skill', 'Warning');
+      return; // Exit function if skillIds are missing
+    }
+  
+    // Proceed with adding or updating user
     if (obj.id != null) {
+      debugger
+      // Update existing user
+      console.log('Updating user:', obj.id);
       this.http.put(`https://localhost:7071/User/Update/${obj.id}`, obj).subscribe(
         (res: any) => {
           debugger
-          console.log(obj)
-          this.showToastrAndReload('Updated Successfully', 'Success');
-         
+          console.log('User updated successfully:', res);
+          this.toastr.success('User updated successfully!', 'Success');
+          // Optionally handle any further logic after successful update
         },
         (error) => {
           console.error('Update request failed:', error);
@@ -234,18 +294,20 @@ export class AddComponent {
         }
       );
     } else {
-      debugger
-      this.http.post('https://localhost:7071/User/Add', obj).subscribe((res: any) => {
-        debugger
-        this.showToastrAndReload('Added Successfully', 'Success');
-      },
+      // Add new user
+      console.log('Adding new user.');
+      this.http.post('https://localhost:7071/User/Add', obj).subscribe(
+        (res: any) => {
+          console.log('User added successfully:', res);
+          this.toastr.success('User added successfully!', 'Success');
+          // Optionally handle any further logic after successful addition
+        },
         (error) => {
           console.error('Adding request failed:', error);
           this.toastr.error('Failed to add user', 'Error');
         }
       );
     }
-    this.GetAll()
   }
   
   showToastrAndReload(message: string, title: string) {
@@ -253,7 +315,7 @@ export class AddComponent {
       timeOut: 1000 // Timeout for Toastr
     };
   
-    // Show the Toastr notification and subscribe to the onHidden event
+    
     const toastrRef = this.toastr.success(message, title, toastrConfig);
     toastrRef.onHidden.subscribe(() => window.location.reload()); // Reload window after Toastr is hidden
   }

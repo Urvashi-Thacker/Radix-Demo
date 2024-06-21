@@ -27,7 +27,7 @@ export class AccountService {
     debugger
     this.loggedinUser = email;
     this.storeJWT(token.token);
-    this.isAuthenticatedSubject.next(true);
+   this.isAuthenticatedSubject.next(true);
   }
 
   storeJWT(token: string) {

@@ -23,7 +23,7 @@ export class SignInComponent {
   isValid: boolean = false
   hide = true
   isAuthenticated: boolean = false;
-
+ isLoggedIn : boolean =false;
   private authService = inject(AccountService);
 
   constructor(private route: Router, private http: HttpClient, private toastr: ToastrService) {
@@ -37,19 +37,26 @@ export class SignInComponent {
   }
 
   LoginEvent() {
+    debugger
     this.isValid = this.siginForm.invalid;
 
-    const obj = this.siginForm.value;
-
-    this.authService.login({ email: obj.email, password: obj.password }).subscribe((res) => {
-      if (res) {
-        this.route.navigate(['employee']);
+    const obj = this.siginForm.value; 
+  
+    this.authService.login({ email: obj.email, password: obj.password }).subscribe(
+      (res) => {
+        if (res) {
+          this.isLoggedIn = true;
+          this.toastr.success("Successfully logged in", 'Success');
+          this.route.navigate(['employee']);
+        } else {
+          throw new Error("Login failed"); 
+        }
+      },
+      (error) => {       
+        console.error("Error during login:", error);      
+        this.toastr.error("Enter valid email & password", 'Error');
       }
-
-      if (this.isValid == true) {
-        this.toastr.error("Enter  email & password", 'Error')
-      }
-    })
+    ); 
   }
 
   clickEvent(event: MouseEvent) {

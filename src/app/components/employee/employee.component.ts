@@ -64,11 +64,6 @@ export class EmployeeComponent implements OnInit {
 
   constructor(private route: Router, public dialog: MatDialog, private http: HttpClient, private toastr: ToastrService, private router: Router, private exportService: ExportService) {
   }
-  // ngAfterViewInit() {
-  //   this.dataSource.sort = this.sort;
-
-  // }
-
   ngOnInit() {
     this.GetAll()
     this.GetDepartment()
@@ -177,9 +172,7 @@ export class EmployeeComponent implements OnInit {
   }
 
   GetDepartment() {
-    //debugger
     this.http.get("https://localhost:7071/Department/GetDepartmentList").subscribe((res: any) => {
-      //  debugger
       console.log(res)
       this.department = res
       this.GetAll()
@@ -188,10 +181,8 @@ export class EmployeeComponent implements OnInit {
 
   GetSkills() {
     this.http.get("https://localhost:7071/Skills/GetSkills").subscribe((res: any) => {
-      //debugger
       console.log(res)
       this.skills = res
-
     })
   }
 
@@ -205,7 +196,6 @@ export class EmployeeComponent implements OnInit {
 
   GetWorkingShifts() {
     this.http.get("https://localhost:7071/WorkingShift/GetWorkingShiftList").subscribe((res: any) => {
-      //debugger
       console.log(res)
       this.workingShifts = res
 
@@ -215,25 +205,47 @@ export class EmployeeComponent implements OnInit {
   exportToCSV() {
     debugger
     const exportData = this.userArray.map(employee => {
+      const dob = new Date(employee.dob).toLocaleDateString();
+  
+      
+      const userSkills = employee.userSkillNames && employee.userSkillNames.includes(',') ? `"${employee.userSkillNames}"` : employee.userSkillNames;
+      const userShifts = employee.userWorkingShiftNames && employee.userWorkingShiftNames.includes(',') ? `"${employee.userWorkingShiftNames}"` : employee.userWorkingShiftNames;
+  
+      return {
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        gender: this.getGenderLabel(employee.gender),
+        departmentName: this.department.find(dp => dp.id === employee.departmentId)?.name || 'unknown',
+        email: employee.email,
+        isActive: employee.isActive,
+        dob: dob,
+        userWorkingShiftNames: userShifts || '', 
+        userSkillNames: userSkills || '' 
+      };
+    });
+  
+    this.exportService.exportToCSV(exportData, 'Employee.csv');
+  }
+  
+  
+  exportToExcel() {
+    debugger
+    const exportData = this.userArray.map(employee => {
       const dob = new Date(employee.dob).toLocaleDateString()
       return {
         firstName: employee.firstName,
         lastName: employee.lastName,
         gender: this.getGenderLabel(employee.gender),
-        dob: dob,
         departmentName: this.department.find(dp => dp.id === employee.departmentId)?.name || 'unknown',
         email: employee.email,
-        userSkillNames: employee.userSkillNames,
-        userWorkingShiftNames: employee.userWorkingShiftNames,
         isActive: employee.isActive,
-        avatarUrl: employee.avatarUrl
+        dob: dob,
+        userWorkingShiftNames: employee.userWorkingShiftNames,
+        userSkillNames: employee.userSkillNames ? employee.userSkillNames.join(', ') : 'N/A',
+       
       };
     });
-    this.exportService.exportToCSV(exportData, 'Employee.csv')
-  }
-  exportToExcel() {
-    debugger
-    this.exportService.exportToExcel(this.userArray, 'Employee.xlsx')
+    this.exportService.exportToExcel(exportData, 'Employee.xlsx')
 
   }
 
@@ -242,37 +254,7 @@ export class EmployeeComponent implements OnInit {
     this.dataSource.filter = value
   }
 
-  // fetchDataBySearchTerm(event: Event): void {
-  //   const searchTerm = (event.target as HTMLInputElement).value;
-  //   const apiUrl = `https://localhost:7071/User/GetUsersForFSP?searchTerm=${searchTerm}`;
-  //   this.http.get<any[]>(apiUrl).subscribe((response: any[]) => {
-  //     this.dataSource.data = response.map(user => this.modifyUser(user));
-  //     this.updateUserArrayAndPagination(response.length);
-  //   });
-  // }
-
-  // updateUserArrayAndPagination(totalItems: number): void {
-  //   this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
-  //     const usersFromAPI = res;
-  //     const modifiedUsers = usersFromAPI.map((user: any) => this.modifyUser(user));
-  //     this.userArray = this.dataSource.data.map(dataSourceUser => {
-  //       const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
-  //       return matchedUser ? matchedUser : dataSourceUser;
-  //     });
-
-  //     debugger
-  //     this.totalItems = totalItems;
-  //     this.totalPages = Math.ceil(totalItems / this.pageSize);
-  //   });
-  // }
-
-
-
-  // fetchPaginatedData(page: number, pageSize: number): Observable<any[]> {
-  //   const apiUrl = `https://localhost:7071/User/GetUsersForFSP?page=${page}&limit=${pageSize}`;
-  //   return this.http.get<any[]>(apiUrl);
-
-  // }
+ 
 
 
   modifyUser(user: any): any {
@@ -296,84 +278,7 @@ export class EmployeeComponent implements OnInit {
   }
 
 
-  // fetchSortedData(sortColumn: string, sortDirection: string): Observable<any[]> {
-  //   let params = new HttpParams();
-  //   params = params.append('sortColumn', sortColumn);
-  //   params = params.append('sortDirection', sortDirection);
-  //   return this.http.get<any[]>('https://localhost:7071/User/GetUsersForFSP', { params: params });
-  // }
-  // SortData(): void {
-  //   debugger;
-  //   this.fetchSortedData(this.sortColumn, this.sortDirection).subscribe(response => {
-  //     debugger;
-
-  //     this.dataSource.data = response;
-  //     this.totalItems = response.length;
-  //     this.http.get("https://localhost:7071/User/GetAll").subscribe((res: any) => {
-  //       const usersFromAPI = res;
-  //       const modifiedUsers = usersFromAPI.map((user: { departmentId: any; id: any; firstName: any; lastName: any; gender: any; dob: any; email: any; userSkills: any; userWorkingShifts: any; userSkillNames: any; userWorkingShiftNames: any; avatarUrl: any; isActive: any; }) => {
-  //         const departmentnm = this.department.find(dp => dp.id === user.departmentId);
-  //         debugger
-  //         const modifiedUser = {
-  //           id: user.id,
-  //           firstName: user.firstName,
-  //           lastName: user.lastName,
-  //           gender: user.gender,
-  //           dob: user.dob,
-  //           email: user.email,
-  //           departmentId: user.departmentId,
-  //           skillIds: user.userSkills,
-  //           shiftIds: user.userWorkingShifts,
-  //           userSkillNames: user.userSkillNames,
-  //           userWorkingShiftNames: user.userWorkingShiftNames,
-  //           avatarUrl: user.avatarUrl,
-  //           isActive: user.isActive,
-  //           departmentName: departmentnm ? departmentnm.name : 'unknown'
-  //         };
-  //         return modifiedUser;
-  //       });
-  //       debugger
-  //       const mappedUsers = this.dataSource.data.map(dataSourceUser => {
-  //         const matchedUser = modifiedUsers.find((modifiedUser: { id: any; }) => modifiedUser.id === dataSourceUser.id);
-  //         if (matchedUser) {
-  //           return matchedUser;
-  //         } else {
-  //           return dataSourceUser;
-  //         }
-  //       });
-  //       this.userArray = mappedUsers;
-  //     });
-  //   });
-  // }
-
-  // applySorting(column: string) {
-  //   this.SortData()
-  //   if (this.sortColumn === column) {
-  //     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-  //   } else {
-  //     this.sortColumn = column;
-  //     this.sortDirection = 'asc';
-  //   }
-
-
-  //   this.userArray.sort((a, b) => {
-  //     const valA = a[column];
-  //     const valB = b[column];
-  //     if (valA < valB) {
-  //       return this.sortDirection === 'asc' ? -1 : 1;
-  //     } else if (valA > valB) {
-  //       return this.sortDirection === 'asc' ? 1 : -1;
-  //     } else {
-  //       return 0;
-  //     }
-  //   });
-
-  //   this.fetchSortedData(this.sortColumn, this.sortDirection).subscribe(response => {
-  //     this.dataSource.data = response;
-  //     this.dataSource.sort = this.sort;
-  //   });
-  // }
-
+ 
 }
 
 

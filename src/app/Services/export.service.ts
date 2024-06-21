@@ -18,6 +18,7 @@ export class ExportService {
     link.click();
   }
   private convertToCSV(data: any[]): string {
+    debugger
     const csvRows = [];
     const headers = Object.keys(data[0]);
     csvRows.push(headers.join(','));
